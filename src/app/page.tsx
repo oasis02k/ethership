@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 const heroImage =
   "https://www.figma.com/api/mcp/asset/a6d275d8-5e40-4806-8f18-0edae1dbeb5b";
@@ -20,13 +21,14 @@ export default function Home() {
       </nav>
 
       <div className="flex flex-col flex-1 min-h-0">
-        <div className="flex items-stretch flex-1 min-h-0 -mb-[120px]">
-          <div className="relative w-[88%] shrink-0">
+        <div className="flex items-stretch flex-1 min-h-0 pb-10 -mb-[clamp(30px,8.33vw,120px)]">
+          <div className="relative w-[75%] shrink-0">
             <img
               src={heroImage}
               alt="Forestry Institute 2024"
               className="absolute inset-0 w-full h-full object-cover"
             />
+            <Link href="/project" className="absolute inset-0 z-10" aria-label="View project detail" />
             <div className="absolute right-0 top-0 w-[51px] h-full bg-[#F5F0E8] flex items-center justify-center overflow-hidden">
               <p className="font-bold text-2xl text-black tracking-[-0.02em] whitespace-nowrap -rotate-90">
                 Forestry Institute 2024
