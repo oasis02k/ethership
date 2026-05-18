@@ -178,7 +178,7 @@ export default function ProjectDetail() {
               onMouseLeave={handleThumbLeave}
               className={`relative w-full aspect-[80/45] shrink-0 overflow-hidden ${
                 activeIndex === i
-                  ? "ring-2 ring-[#0f100e] opacity-100"
+                  ? "opacity-100"
                   : "opacity-50 hover:opacity-100 transition-opacity duration-300"
               }`}
             >
@@ -187,6 +187,9 @@ export default function ProjectDetail() {
                 alt={`Thumbnail ${i + 1}`}
                 className="absolute inset-0 w-full h-full object-cover"
               />
+              {activeIndex === i && (
+                <div className="absolute inset-0 border-2 border-[#0f100e] z-10 pointer-events-none" />
+              )}
             </button>
           ))}
         </div>
