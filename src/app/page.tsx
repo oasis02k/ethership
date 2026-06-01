@@ -1,183 +1,86 @@
-"use client";
+const imgLogo =
+  'https://www.figma.com/api/mcp/asset/809dbe26-5b17-410d-bdfb-b7a2a006a3c0';
+const imgGridPattern =
+  'https://www.figma.com/api/mcp/asset/16f1f464-edaa-4e9c-89e1-32d673db1935';
 
-import { useState, useRef, useEffect, useCallback } from "react";
-import Link from "next/link";
-import gsap from "gsap";
+const images = {
+  aq37461:             'https://www.figma.com/api/mcp/asset/5cb56e8c-a423-40f1-a487-7dd7403983f8',
+  nx43361:             'https://www.figma.com/api/mcp/asset/425c3d56-240e-4560-8b7e-eb6ff46ccee9',
+  jejo:                'https://www.figma.com/api/mcp/asset/1d318e4b-42e5-4491-a792-4b29464abdcc',
+  perspectiveEntrance: 'https://www.figma.com/api/mcp/asset/96d312a5-0b4c-48b4-a558-4aee6819e559',
+  jinjumuseum:         'https://www.figma.com/api/mcp/asset/38ec2504-f8ed-41ea-9a01-28d7fa25955e',
+  sen230:              'https://www.figma.com/api/mcp/asset/3af5df27-2268-4895-8521-bc026805f4e2',
+  yeonsu:              'https://www.figma.com/api/mcp/asset/12d90af3-079f-4536-8d9a-446fb2689817',
+  aerialView:          'https://www.figma.com/api/mcp/asset/2615a17b-0e3a-4f73-bcec-fbec9b8819a3',
+  projectPreview:      'https://www.figma.com/api/mcp/asset/573a2074-20de-4212-97a6-6c39fc36ac99',
+  perspective01:       'https://www.figma.com/api/mcp/asset/66b84692-0747-426f-aa17-07c29d32491f',
+  ie43063:             'https://www.figma.com/api/mcp/asset/042eae63-6405-4173-ac0d-e9e6f5fa86f4',
+  sa28564:             'https://www.figma.com/api/mcp/asset/f2146b1f-eb3b-4c2e-b53b-c6e7d72a7fa7',
+};
 
-const slides = [
-  {
-    src: "https://www.figma.com/api/mcp/asset/a6d275d8-5e40-4806-8f18-0edae1dbeb5b",
-    title: "Forestry Institute 2024",
-  },
-  {
-    src: "/work/02.jpg",
-    title: "Banpo Park 2024",
-  },
-  {
-    src: "/work/03.jpg",
-    title: "Seoul Library 2023",
-  },
-];
+function NavBar() {
+  return (
+    <nav className="absolute top-4 left-6 right-6 h-14 bg-[#2e2e2b] rounded-[4px] flex items-center px-6 z-10">
+      <div className="flex flex-1 items-center justify-between">
+        <div className="relative h-4 w-[168px] shrink-0">
+          <img
+            alt="Ether Ship"
+            className="absolute inset-0 h-full w-full object-contain object-left"
+            src={imgLogo}
+          />
+        </div>
+        <span className="font-medium text-[#f6f4ee] text-[18px] tracking-[-0.36px] whitespace-nowrap">
+          MENU
+        </span>
+      </div>
+    </nav>
+  );
+}
 
 export default function Home() {
-  const [current, setCurrent] = useState(0);
-  const [incomingIndex, setIncomingIndex] = useState<number | null>(null);
-  const [displayedTitle, setDisplayedTitle] = useState(slides[0].title);
-  const [displayedCount, setDisplayedCount] = useState(1);
-
-  const isAnimating = useRef(false);
-  const pendingIndex = useRef<number | null>(null);
-  const directionRef = useRef<"next" | "prev">("next");
-  const incomingRef = useRef<HTMLImageElement>(null);
-  const titleRef = useRef<HTMLParagraphElement>(null);
-  const heroTextRef = useRef<HTMLParagraphElement>(null);
-
-  const total = slides.length;
-
-  const navigate = useCallback(
-    (dir: "next" | "prev") => {
-      if (isAnimating.current) return;
-      isAnimating.current = true;
-      directionRef.current = dir;
-
-      const nextIndex =
-        dir === "next" ? (current + 1) % total : (current - 1 + total) % total;
-      pendingIndex.current = nextIndex;
-
-      const yOut = dir === "next" ? -12 : 12;
-      gsap.to(titleRef.current, {
-        opacity: 0,
-        y: yOut,
-        duration: 0.25,
-        ease: "power2.in",
-        onComplete: () => {
-          setDisplayedTitle(slides[nextIndex].title);
-          setDisplayedCount(nextIndex + 1);
-          gsap.fromTo(
-            titleRef.current,
-            { opacity: 0, y: -yOut },
-            { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }
-          );
-        },
-      });
-
-      setIncomingIndex(nextIndex);
-    },
-    [current, total]
-  );
-
-  // Image wipe animation triggered when incomingIndex is set
-  useEffect(() => {
-    if (incomingIndex === null || !incomingRef.current) return;
-
-    const isNext = directionRef.current === "next";
-    const fromClip = isNext ? "inset(0 100% 0 0)" : "inset(0 0 0 100%)";
-
-    gsap.fromTo(
-      incomingRef.current,
-      { clipPath: fromClip, scale: 1.06 },
-      {
-        clipPath: "inset(0 0% 0 0)",
-        scale: 1,
-        duration: 1.0,
-        ease: "power4.inOut",
-        onComplete: () => {
-          setCurrent(pendingIndex.current!);
-          setIncomingIndex(null);
-          isAnimating.current = false;
-        },
-      }
-    );
-  }, [incomingIndex]);
-
-  // Entrance reveal for hero text
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.from(heroTextRef.current, {
-        yPercent: 110,
-        opacity: 0,
-        duration: 1.2,
-        ease: "power4.out",
-        delay: 0.3,
-      });
-    });
-    return () => ctx.revert();
-  }, []);
-
-  // Auto-rotation: resets to 3s after every slide commit
-  useEffect(() => {
-    const timer = setTimeout(() => navigate("next"), 3000);
-    return () => clearTimeout(timer);
-  }, [current, navigate]);
-
-  const slide = slides[current];
-
   return (
-    <div className="bg-[#ffffff] relative overflow-hidden w-full h-screen flex flex-col">
-      <nav className="absolute top-0 left-0 right-0 h-20 flex items-center px-6 z-10">
-        <div className="flex-1 flex items-center justify-end">
-          <span className="font-bold text-2xl tracking-[-0.02em] text-[#0f100e] whitespace-nowrap cursor-pointer">
-            MENU
-          </span>
-        </div>
-      </nav>
+    <div className="relative w-full h-screen overflow-hidden bg-white">
+      <div
+        aria-hidden
+        className="absolute inset-0 pointer-events-none opacity-[0.08]"
+        style={{
+          backgroundImage: `url("${imgGridPattern}")`,
+          backgroundSize: '136px 136px',
+          backgroundPosition: 'top left',
+        }}
+      />
 
-      <div className="flex flex-col flex-1 min-h-0">
-        <div className="flex items-stretch flex-1 min-h-0 pb-10 -mb-[clamp(30px,8.33vw,120px)] relative">
-          <div className="relative w-[75%] shrink-0 overflow-hidden z-0">
-            <img
-              src={slide.src}
-              alt={slide.title}
-              className="absolute inset-0 w-full h-full object-cover"
-            />
+      <NavBar />
 
-            {incomingIndex !== null && (
-              <img
-                ref={incomingRef}
-                src={slides[incomingIndex].src}
-                alt=""
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-            )}
-
-            <Link href="/project" className="absolute inset-0 z-10" aria-label="View project detail" />
-
-            <div className="absolute right-0 top-0 w-[51px] h-full bg-[#F5F0E8] flex items-center justify-center overflow-hidden z-20">
-              <p
-                ref={titleRef}
-                className="font-bold text-2xl text-black tracking-[-0.02em] whitespace-nowrap -rotate-90"
-              >
-                {displayedTitle}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex-1 flex items-center justify-center gap-6">
-            <button
-              onClick={() => navigate("prev")}
-              className="text-black w-6 h-6 flex items-center justify-center text-2xl leading-none"
-              aria-label="Previous"
-            >
-              ‹
-            </button>
-            <span className="font-bold text-[48px] text-black tracking-[-0.02em] whitespace-nowrap leading-none">
-              {displayedCount}/{total}
-            </span>
-            <button
-              onClick={() => navigate("next")}
-              className="text-black w-6 h-6 flex items-center justify-center text-2xl leading-none"
-              aria-label="Next"
-            >
-              ›
-            </button>
-          </div>
-        </div>
-
-        <div className="overflow-hidden relative z-10 shrink-0">
-          <p ref={heroTextRef} className="font-bold leading-none text-[#2e2e2b] uppercase whitespace-nowrap tracking-[-0.04em] text-[18vw]">
-            Ether Ship
-          </p>
-        </div>
+      {/* Image strip */}
+      <div
+        className="absolute"
+        style={{ left: '-790px', top: '103px', width: '3379px', height: '880px' }}
+      >
+        <img alt="" className="absolute rounded-[4px] object-cover" src={images.ie43063}
+          style={{ left: '51px',   top: '32px',  width: '396px', height: '308px' }} />
+        <img alt="" className="absolute rounded-[4px] object-cover" src={images.jinjumuseum}
+          style={{ left: '519px',  top: '32px',  width: '510px', height: '282px' }} />
+        <img alt="" className="absolute rounded-[4px] object-cover" src={images.perspectiveEntrance}
+          style={{ left: '1100px', top: '51px',  width: '433px', height: '243px' }} />
+        <img alt="" className="absolute rounded-[4px] object-cover" src={images.aq37461}
+          style={{ left: '1649px', top: '14px',  width: '323px', height: '418px' }} />
+        <img alt="" className="absolute rounded-[4px] object-cover" src={images.nx43361}
+          style={{ left: '2028px', top: '32px',  width: '489px', height: '326px' }} />
+        <img alt="" className="absolute rounded-[4px] object-cover" src={images.perspective01}
+          style={{ left: '2573px', top: '89px',  width: '654px', height: '308px' }} />
+        <img alt="" className="absolute object-cover" src={images.sen230}
+          style={{ left: '0px',    top: '383px', width: '373px', height: '373px' }} />
+        <img alt="" className="absolute object-cover" src={images.yeonsu}
+          style={{ left: '457px',  top: '434px', width: '500px', height: '281px' }} />
+        <img alt="" className="absolute object-cover" src={images.aerialView}
+          style={{ left: '997px',  top: '465px', width: '595px', height: '335px' }} />
+        <img alt="" className="absolute object-cover" src={images.jejo}
+          style={{ left: '1676px', top: '551px', width: '464px', height: '261px' }} />
+        <img alt="" className="absolute object-cover" src={images.projectPreview}
+          style={{ left: '2214px', top: '465px', width: '442px', height: '371px' }} />
+        <img alt="" className="absolute rounded-[4px] object-cover" src={images.sa28564}
+          style={{ left: '2850px', top: '434px', width: '265px', height: '446px' }} />
       </div>
     </div>
   );
