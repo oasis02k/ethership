@@ -1,20 +1,21 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #0f100e;
+/* Hide the system cursor only on pointer (non-touch) devices */
+@media (hover: hover) {
+  * { cursor: none; }
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-space-grotesk);
-  --font-body: var(--font-open-sans);
-}
-
-html,
-body {
+html, body {
   background: #ffffff;
-  color: var(--foreground);
+  color: #0f100e;
   font-family: var(--font-space-grotesk), sans-serif;
+}
+
+@keyframes image-apparition {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.card-inner {
+  animation: image-apparition 1.4s ease both;
 }
