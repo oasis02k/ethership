@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Menu from './Menu';
 
 const imgLogo = 'https://www.figma.com/api/mcp/asset/f551b2f1-b1cd-4bec-a9df-70254fca3479';
@@ -52,15 +52,62 @@ function ImageTile({ src, ratio, className = '' }: { src: string; ratio: string;
   );
 }
 
-function TickerPanel({ baseDur }: { baseDur: number }) {
+function TickerPanel({ pxPerSec = 40 }: { pxPerSec?: number }) {
+  const strip1Ref = useRef<HTMLDivElement>(null);
+  const strip2Ref = useRef<HTMLDivElement>(null);
+  const a = useRef({ y1: 0, y2: 0, vel: 0, h: 0, prev: 0, raf: 0 });
+
+  useEffect(() => {
+    const s1 = strip1Ref.current;
+    const s2 = strip2Ref.current;
+    if (!s1 || !s2) return;
+
+    // One set's height — strip contains 2 identical sets stacked
+    a.current.h = s1.scrollHeight / 2;
+    // Stagger col2 by a third of the loop for visual offset
+    a.current.y2 = -(a.current.h / 3);
+
+    const tick = (ts: number) => {
+      const dt = a.current.prev === 0 ? 0 : Math.min((ts - a.current.prev) / 1000, 0.05);
+      a.current.prev = ts;
+
+      // Decay wheel velocity (half-life ≈ 0.5s)
+      a.current.vel *= Math.pow(0.985, dt * 60);
+      if (Math.abs(a.current.vel) < 0.3) a.current.vel = 0;
+
+      const move = (pxPerSec + a.current.vel) * dt;
+      a.current.y1 -= move;
+      a.current.y2 -= move;
+
+      // Seamless loop
+      const h = a.current.h;
+      if (h > 0) {
+        if (a.current.y1 < -h) a.current.y1 += h;
+        if (a.current.y1 > 0)  a.current.y1 -= h;
+        if (a.current.y2 < -h) a.current.y2 += h;
+        if (a.current.y2 > 0)  a.current.y2 -= h;
+      }
+
+      s1.style.transform = `translateY(${a.current.y1}px)`;
+      s2.style.transform = `translateY(${a.current.y2}px)`;
+      a.current.raf = requestAnimationFrame(tick);
+    };
+
+    a.current.raf = requestAnimationFrame(tick);
+    return () => { cancelAnimationFrame(a.current.raf); a.current.prev = 0; };
+  }, [pxPerSec]);
+
+  const onWheel = (e: React.WheelEvent) => {
+    a.current.vel += e.deltaY * 0.8;
+  };
+
   return (
-    <div className="flex-1 bg-[#f6f4ee] overflow-hidden flex gap-4 px-8 pt-4">
-      {/* Col 1 */}
+    <div
+      className="flex-1 bg-[#f6f4ee] overflow-hidden flex gap-4 px-8 pt-4"
+      onWheel={onWheel}
+    >
       <div className="flex-1 overflow-hidden">
-        <div
-          className="flex flex-col gap-4 will-change-transform ticker-down"
-          style={{ '--ticker-dur': `${baseDur}s` } as React.CSSProperties}
-        >
+        <div ref={strip1Ref} className="flex flex-col gap-4 will-change-transform">
           {([0, 1] as const).map((set) => (
             <div key={set} className="flex flex-col gap-4">
               {col1.map((img) => (
@@ -71,13 +118,8 @@ function TickerPanel({ baseDur }: { baseDur: number }) {
           ))}
         </div>
       </div>
-
-      {/* Col 2 */}
       <div className="flex-1 overflow-hidden">
-        <div
-          className="flex flex-col gap-4 will-change-transform ticker-down"
-          style={{ '--ticker-dur': `${baseDur}s`, animationDelay: '-30s' } as React.CSSProperties}
-        >
+        <div ref={strip2Ref} className="flex flex-col gap-4 will-change-transform">
           {([0, 1] as const).map((set) => (
             <div key={set} className="flex flex-col gap-4">
               {col2.map((img) => (
@@ -155,7 +197,7 @@ export default function Home() {
           </div>
         </div>
 
-        <TickerPanel baseDur={90} />
+        <TickerPanel pxPerSec={40} />
       </div>
 
       {/* ── Mobile (< 768 px) ──────────────────────────────────────────── */}
