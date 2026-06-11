@@ -1,10 +1,5 @@
 @import "tailwindcss";
 
-/* Hide the system cursor only on pointer (non-touch) devices */
-@media (hover: hover) {
-  * { cursor: none; }
-}
-
 html, body {
   background: #ffffff;
   color: #0f100e;
@@ -19,3 +14,28 @@ html, body {
 .card-inner {
   animation: image-apparition 1.4s ease both;
 }
+
+@keyframes tickerDown {
+  from { transform: translateY(-50%); }
+  to   { transform: translateY(0%); }
+}
+
+@keyframes tickerUp {
+  from { transform: translateY(0%); }
+  to   { transform: translateY(-50%); }
+}
+
+.ticker-down {
+  animation-name: tickerDown;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-duration: var(--ticker-dur, 90s);
+}
+
+.ticker-up {
+  animation-name: tickerUp;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-duration: var(--ticker-dur, 90s);
+}
+
