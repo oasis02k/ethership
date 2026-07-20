@@ -21,6 +21,7 @@ export default async function ProjectDetailPage({
 
   const currentIndex = order.findIndex((p: { slug: string }) => p.slug === slug);
   const nextSlug = order[(currentIndex + 1) % order.length]?.slug ?? slug;
+  const prevSlug = order[(currentIndex - 1 + order.length) % order.length]?.slug ?? slug;
 
-  return <ProjectDetailView project={project} nextSlug={nextSlug} />;
+  return <ProjectDetailView project={project} prevSlug={prevSlug} nextSlug={nextSlug} />;
 }

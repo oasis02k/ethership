@@ -61,9 +61,11 @@ function CarouselChevron({ color, direction = 'left' }: { color: string; directi
 
 export default function ProjectDetailView({
   project,
+  prevSlug,
   nextSlug,
 }: {
   project: Project;
+  prevSlug: string;
   nextSlug: string;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -98,12 +100,12 @@ export default function ProjectDetailView({
       <div className="min-h-screen bg-white flex flex-col items-center gap-6 pt-[104px] md:pt-[120px] pb-16 md:pb-20 px-4 md:px-6">
         <div className="flex items-center justify-between w-full max-w-[1024px]">
           <Link
-            href="/project"
+            href={`/project/${prevSlug}`}
             className="flex items-center gap-2 text-[#2e2e2b] font-medium text-[15px] md:text-[16px] tracking-[-0.48px] whitespace-nowrap"
             style={{ fontFamily: 'var(--font-ibm-plex-mono)' }}
           >
             <SmallChevron />
-            Back to list
+            Prev Project
           </Link>
           <Link
             href={`/project/${nextSlug}`}
