@@ -10,7 +10,8 @@ const spaceGrotesk = Space_Grotesk({
 const cormorantGaramond = Cormorant_Garamond({
   variable: "--font-cormorant",
   subsets: ["latin"],
-  weight: ["700"],
+  weight: ["600", "700"],
+  style: ["normal", "italic"],
 });
 
 const ibmPlexMono = IBM_Plex_Mono({
