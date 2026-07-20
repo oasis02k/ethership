@@ -44,6 +44,14 @@ function SmallChevron({ color = '#2e2e2b' }: { color?: string }) {
   );
 }
 
+function ChevronDown({ color = 'currentColor' }: { color?: string }) {
+  return (
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
+      <path d="M4 6L8 10L12 6" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 function CarouselChevron({ color, direction = 'left' }: { color: string; direction?: 'left' | 'right' }) {
   return (
     <svg
@@ -172,9 +180,15 @@ export default function ProjectDetailView({
           {hasInfos && (
             <button
               onClick={() => setShowInfos((v) => !v)}
-              className="font-medium text-[20px] tracking-[-0.6px] text-[#0f100e]"
+              className="flex items-center gap-1.5 font-medium text-[20px] tracking-[-0.6px] text-[#0f100e] hover:text-[#bb9a6d] transition-colors cursor-pointer"
             >
               {showInfos ? 'CLOSE' : 'INFOS'}
+              <span
+                className="flex transition-transform duration-200"
+                style={{ transform: showInfos ? 'rotate(180deg)' : undefined }}
+              >
+                <ChevronDown />
+              </span>
             </button>
           )}
         </div>
