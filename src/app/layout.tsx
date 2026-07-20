@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, Cormorant_Garamond } from "next/font/google";
+import { Space_Grotesk, Cormorant_Garamond, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -13,6 +13,12 @@ const cormorantGaramond = Cormorant_Garamond({
   weight: ["700"],
 });
 
+const ibmPlexMono = IBM_Plex_Mono({
+  variable: "--font-ibm-plex-mono",
+  subsets: ["latin"],
+  weight: ["500"],
+});
+
 export const metadata: Metadata = {
   title: "Ether Ship",
   description: "Ether Ship",
@@ -24,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${spaceGrotesk.variable} ${cormorantGaramond.variable}`}>
+    <html lang="en" className={`${spaceGrotesk.variable} ${cormorantGaramond.variable} ${ibmPlexMono.variable}`}>
       <body>{children}</body>
     </html>
   );

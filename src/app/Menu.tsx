@@ -1,12 +1,46 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
+import Link from 'next/link';
 
-const imgLogo     = 'https://www.figma.com/api/mcp/asset/f551b2f1-b1cd-4bec-a9df-70254fca3479';
-const imgArtPhoto = 'https://www.figma.com/api/mcp/asset/69805a37-77ee-4ab9-bd08-2306448ae6f2';
+const imgLogo     = '/logo.svg';
+const imgArtPhoto = '/menu-image.jpg';
 
 const NAV_ITEMS    = ['HOME', 'ABOUT', 'PROJECT', 'ETHER ART', 'PRESS'];
 const FOOTER_LINKS = ['ABOUT', 'PROJECT', 'ETHER ART', 'PRESS'];
+
+// Only items with a real destination navigate — the rest stay inert placeholders.
+const ROUTES: Partial<Record<string, string>> = {
+  HOME: '/',
+  PROJECT: '/project',
+};
+
+function NavLink({
+  label, className, style, onNavigate,
+}: {
+  label: string;
+  className: string;
+  style?: CSSProperties;
+  onNavigate: () => void;
+}) {
+  const href = ROUTES[label];
+  if (!href) {
+    return <p className={className} style={style}>{label}</p>;
+  }
+  return (
+    <Link href={href} onClick={onNavigate} className={className} style={style}>
+      {label}
+    </Link>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path d="M18 6L6 18M6 6L18 18" stroke="#f6f4ee" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
 
 interface MenuProps {
   isOpen: boolean;
@@ -69,9 +103,12 @@ export default function Menu({ isOpen, onClose }: MenuProps) {
         </div>
         <button
           onClick={onClose}
-          className="font-medium text-[#f6f4ee] text-[18px] tracking-[-0.36px] whitespace-nowrap"
+          className="hidden md:block font-medium text-[#f6f4ee] text-[18px] tracking-[-0.36px] whitespace-nowrap"
         >
           CLOSE
+        </button>
+        <button onClick={onClose} aria-label="Close menu" className="md:hidden relative shrink-0 size-[24px]">
+          <CloseIcon />
         </button>
       </div>
 
@@ -104,13 +141,13 @@ export default function Menu({ isOpen, onClose }: MenuProps) {
               MENU
             </p>
             {NAV_ITEMS.map((item, i) => (
-              <p
+              <NavLink
                 key={item}
+                label={item}
+                onNavigate={onClose}
                 className="font-bold text-[#f6f4ee] text-[48px] leading-tight tracking-[-0.02em] cursor-pointer hover:text-[#bb9a6d] transition-colors duration-200"
                 style={stagger(i)}
-              >
-                {item}
-              </p>
+              />
             ))}
           </div>
 
@@ -136,13 +173,13 @@ export default function Menu({ isOpen, onClose }: MenuProps) {
       <div className="hidden md:flex absolute bottom-0 left-0 right-0 items-center justify-between px-6 py-6 border-t border-[rgba(246,244,238,0.12)]">
         <div className="flex gap-14">
           {FOOTER_LINKS.map((link, i) => (
-            <span
+            <NavLink
               key={link}
+              label={link}
+              onNavigate={onClose}
               className="text-[#f6f4ee] text-[14px] font-medium tracking-[-0.02em] uppercase cursor-pointer hover:text-[#bb9a6d] transition-colors duration-200"
               style={stagger(i)}
-            >
-              {link}
-            </span>
+            />
           ))}
         </div>
         <p className="text-white text-[14px] tracking-[-0.02em]">
@@ -162,13 +199,13 @@ export default function Menu({ isOpen, onClose }: MenuProps) {
               MENU
             </p>
             {NAV_ITEMS.map((item, i) => (
-              <p
+              <NavLink
                 key={item}
+                label={item}
+                onNavigate={onClose}
                 className="font-bold text-[#f6f4ee] text-[24px] leading-snug tracking-[-0.02em] cursor-pointer hover:text-[#bb9a6d] transition-colors duration-200"
                 style={stagger(i)}
-              >
-                {item}
-              </p>
+              />
             ))}
           </div>
 
@@ -194,7 +231,7 @@ export default function Menu({ isOpen, onClose }: MenuProps) {
           <div className="px-5 py-5 flex flex-col gap-4 text-white text-[14px] uppercase tracking-[-0.02em]">
             <div className="flex gap-4">
               <span className="flex-1 cursor-pointer">ABOUT</span>
-              <span className="flex-1 cursor-pointer">PROJECT</span>
+              <NavLink label="PROJECT" onNavigate={onClose} className="flex-1 cursor-pointer" />
             </div>
             <div className="flex gap-4">
               <span className="flex-1 cursor-pointer">ETHER ART</span>
