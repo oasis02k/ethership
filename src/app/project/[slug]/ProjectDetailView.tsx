@@ -52,17 +52,17 @@ function ChevronDown({ color = 'currentColor' }: { color?: string }) {
   );
 }
 
-function CarouselChevron({ color, direction = 'left' }: { color: string; direction?: 'left' | 'right' }) {
+function CarouselChevron({ direction = 'left' }: { direction?: 'left' | 'right' }) {
   return (
     <svg
-      width="6"
-      height="10"
+      width="8"
+      height="14"
       viewBox="0 0 4.85355 8.70711"
       fill="none"
       aria-hidden
       style={{ transform: direction === 'left' ? 'rotate(180deg)' : undefined }}
     >
-      <path d="M0.353553 8.35355L4.35355 4.35355L0.353553 0.353553" stroke={color} strokeLinejoin="round" />
+      <path d="M0.353553 8.35355L4.35355 4.35355L0.353553 0.353553" stroke="currentColor" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -133,9 +133,9 @@ export default function ProjectDetailView({
               onClick={goPrev}
               disabled={total <= 1}
               aria-label="Previous image"
-              className="hidden sm:flex items-center justify-center rounded-full bg-white ring-1 ring-[#c8c3b9] size-8 shrink-0 disabled:opacity-30"
+              className="hidden sm:flex items-center justify-center rounded-full bg-white ring-1 ring-[#c8c3b9] text-[#bb9a6d] hover:bg-[#bb9a6d] hover:text-white hover:ring-0 transition-colors size-12 shrink-0 disabled:opacity-30"
             >
-              <CarouselChevron color="#bb9a6d" direction="left" />
+              <CarouselChevron direction="left" />
             </button>
 
             <div
@@ -153,9 +153,9 @@ export default function ProjectDetailView({
               onClick={goNext}
               disabled={total <= 1}
               aria-label="Next image"
-              className="hidden sm:flex items-center justify-center rounded-full bg-[#bb9a6d] size-8 shrink-0 disabled:opacity-30"
+              className="hidden sm:flex items-center justify-center rounded-full bg-white ring-1 ring-[#c8c3b9] text-[#bb9a6d] hover:bg-[#bb9a6d] hover:text-white hover:ring-0 transition-colors size-12 shrink-0 disabled:opacity-30"
             >
-              <CarouselChevron color="#f6f4ee" direction="right" />
+              <CarouselChevron direction="right" />
             </button>
           </div>
         )}
