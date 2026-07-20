@@ -96,7 +96,7 @@ export default function ProjectDetailView({
       <Nav onMenuClick={() => setMenuOpen(true)} />
 
       <div className="min-h-screen bg-white flex flex-col items-center gap-6 pt-[104px] md:pt-[120px] pb-16 md:pb-20 px-4 md:px-6">
-        <div className="flex items-center justify-between w-full max-w-[800px]">
+        <div className="flex items-center justify-between w-full max-w-[1024px]">
           <Link
             href="/project"
             className="flex items-center gap-2 text-[#2e2e2b] font-medium text-[15px] md:text-[16px] tracking-[-0.48px] whitespace-nowrap"
@@ -118,7 +118,7 @@ export default function ProjectDetailView({
         </div>
 
         {current?.asset && (
-          <div className="flex items-center gap-3 md:gap-6 w-full max-w-[1100px] justify-center">
+          <div className="flex items-center gap-3 md:gap-6 w-full max-w-[1200px] justify-center">
             <button
               onClick={goPrev}
               disabled={total <= 1}
@@ -129,8 +129,8 @@ export default function ProjectDetailView({
             </button>
 
             <div
-              className="relative w-full overflow-hidden rounded-[4px] bg-[#f6f4ee] h-[250px] sm:h-[450px]"
-              style={{ maxWidth: '800px' }}
+              className="relative w-full overflow-hidden rounded-[4px] bg-[#f6f4ee] h-[250px] sm:h-[576px]"
+              style={{ maxWidth: '1024px' }}
             >
               <img
                 src={urlForImage(current.asset).width(1600).url()}
