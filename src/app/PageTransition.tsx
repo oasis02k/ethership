@@ -9,7 +9,12 @@ export default function PageTransition({ children }: { children: React.ReactNode
     <>
       {/* Sibling overlay, not a wrapper — an ancestor transform would break
           this site's position:fixed page layouts (see globals.css note). */}
-      <div key={pathname} className="page-curtain" aria-hidden="true" />
+      <div key={pathname} className="page-curtain" aria-hidden="true">
+        <div className="page-curtain-bar" />
+        <div className="page-curtain-bar" />
+        <div className="page-curtain-bar" />
+        <div className="page-curtain-bar" />
+      </div>
       {children}
     </>
   );
