@@ -97,7 +97,7 @@ export default function Menu({ isOpen, onClose }: MenuProps) {
       }}
     >
       {/* ── Navbar ──────────────────────────────────────────────────── */}
-      <div className="absolute top-4 left-5 right-5 md:left-6 md:right-6 h-14 flex items-center justify-between px-6 z-10">
+      <div className="absolute top-4 left-5 right-5 md:left-6 md:right-6 h-14 flex items-center justify-between px-5 md:px-6 z-10">
         <div className="relative shrink-0" style={{ height: '15.984px', width: '167.537px' }}>
           <img alt="Ether Ship" className="absolute inset-0 h-full w-full object-contain object-left" src={imgLogo} />
         </div>
@@ -188,10 +188,10 @@ export default function Menu({ isOpen, onClose }: MenuProps) {
       </div>
 
       {/* ── Mobile (< 768 px) ───────────────────────────────────────── */}
-      <div className="md:hidden flex flex-col justify-between flex-1 pt-[72px]">
+      <div className="md:hidden flex flex-col justify-between flex-1 pt-[120px]">
 
         {/* Content */}
-        <div className="px-5 flex flex-col gap-12">
+        <div className="px-10 flex flex-col gap-12">
 
           {/* Nav items */}
           <div className="flex flex-col gap-1">
@@ -228,7 +228,7 @@ export default function Menu({ isOpen, onClose }: MenuProps) {
 
         {/* Mobile footer */}
         <div>
-          <div className="px-5 py-5 flex flex-col gap-4 text-white text-[14px] uppercase tracking-[-0.02em]">
+          <div className="px-10 py-5 flex flex-col gap-4 text-white text-[14px] uppercase tracking-[-0.02em]">
             <div className="flex gap-4">
               <span className="flex-1 cursor-pointer">ABOUT</span>
               <NavLink label="PROJECT" onNavigate={onClose} className="flex-1 cursor-pointer" />
