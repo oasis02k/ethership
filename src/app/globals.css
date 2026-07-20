@@ -19,13 +19,26 @@ html, body {
   animation: image-apparition 1.4s ease both;
 }
 
-@keyframes page-fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+/* Page transition: a curtain that sweeps up to cover the viewport, holds
+   briefly, then continues up and off, revealing the new page underneath.
+   This is a sibling overlay (position: fixed), never an ancestor of the
+   routed content — animating `transform` on an ancestor of a
+   position:fixed element creates a new containing block and breaks this
+   site's fixed full-viewport page layouts. */
+@keyframes page-curtain-sweep {
+  0%   { transform: translateY(100%); }
+  38%  { transform: translateY(0%); }
+  58%  { transform: translateY(0%); }
+  100% { transform: translateY(-100%); }
 }
 
-.page-transition {
-  animation: page-fade-in 0.5s ease both;
+.page-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: #2e2e2b;
+  pointer-events: none;
+  animation: page-curtain-sweep 0.85s cubic-bezier(0.65, 0, 0.35, 1) both;
 }
 
 
