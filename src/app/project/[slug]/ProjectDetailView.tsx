@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { PortableText, type PortableTextBlock } from 'next-sanity';
 import Nav from '../../Nav';
 import Menu from '../../Menu';
 import { urlForImage } from '@/sanity/image';
@@ -24,6 +25,14 @@ interface Project {
   type: 'building' | 'object' | 'ether-art';
   location?: string;
   result?: string;
+  description?: PortableTextBlock[];
+  siteArea?: string;
+  spaceArea?: string;
+  totalArea?: string;
+  buildingCoverage?: string;
+  far?: string;
+  program?: string;
+  team?: string;
   images: ProjectImage[];
 }
 
@@ -59,6 +68,7 @@ export default function ProjectDetailView({
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [index, setIndex] = useState(0);
+  const [showInfos, setShowInfos] = useState(false);
 
   const images = project.images ?? [];
   const total = images.length;
@@ -66,6 +76,20 @@ export default function ProjectDetailView({
 
   const goPrev = () => setIndex((i) => (i - 1 + total) % total);
   const goNext = () => setIndex((i) => (i + 1) % total);
+
+  const specRows: { label: string; value: string }[] = [
+    { label: 'Site Area', value: project.siteArea },
+    { label: 'Space Area', value: project.spaceArea },
+    { label: 'Total Area', value: project.totalArea },
+    { label: 'Building Coverage', value: project.buildingCoverage },
+    { label: 'FAR', value: project.far },
+    { label: 'Program', value: project.program },
+    { label: 'Site', value: project.location },
+    { label: 'Result', value: project.result },
+    { label: 'Team', value: project.team },
+  ].filter((row): row is { label: string; value: string } => Boolean(row.value));
+
+  const hasInfos = (project.description?.length ?? 0) > 0 || specRows.length > 0;
 
   return (
     <>
@@ -148,10 +172,56 @@ export default function ProjectDetailView({
               {project.title} {project.year}
             </h1>
           </div>
-          <button className="font-medium text-[20px] tracking-[-0.6px] text-[#0f100e]">
-            INFOS
-          </button>
+          {hasInfos && (
+            <button
+              onClick={() => setShowInfos((v) => !v)}
+              className="font-medium text-[20px] tracking-[-0.6px] text-[#0f100e]"
+            >
+              {showInfos ? 'CLOSE' : 'INFOS'}
+            </button>
+          )}
         </div>
+
+        {hasInfos && showInfos && (
+          <div className="flex flex-col items-start gap-6 w-full max-w-[800px]">
+            {project.description && project.description.length > 0 && (
+              <div
+                className="columns-1 sm:columns-2 gap-6 text-[#0f100e] text-[14px] tracking-[-0.42px] leading-[1.5]"
+                style={{ fontFamily: 'var(--font-space-grotesk), sans-serif' }}
+              >
+                <PortableText
+                  value={project.description}
+                  components={{
+                    block: {
+                      normal: ({ children }) => <p className="break-inside-avoid mb-4 last:mb-0">{children}</p>,
+                    },
+                  }}
+                />
+              </div>
+            )}
+
+            {specRows.length > 0 && (
+              <div className="w-full border-b border-[rgba(15,16,14,0.12)]">
+                {specRows.map(({ label, value }) => (
+                  <div key={label} className="flex items-start border-t border-[rgba(15,16,14,0.12)]">
+                    <p
+                      className="flex-1 p-4 uppercase text-[14px] tracking-[-0.42px] text-[#0f100e]"
+                      style={{ fontFamily: 'var(--font-ibm-plex-mono)' }}
+                    >
+                      {label}
+                    </p>
+                    <p
+                      className="flex-1 p-4 uppercase text-[14px] tracking-[-0.42px] text-[#0f100e]"
+                      style={{ fontFamily: 'var(--font-ibm-plex-mono)' }}
+                    >
+                      {value}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <Menu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />

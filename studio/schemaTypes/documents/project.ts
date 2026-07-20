@@ -68,6 +68,66 @@ export const project = defineType({
       ],
       validation: (rule) => rule.required().min(1).max(8),
     }),
+    defineField({
+      name: 'description',
+      title: 'Description',
+      description: 'Shown as a two-column block of text when "Infos" is expanded on the project detail page.',
+      type: 'array',
+      of: [defineArrayMember({type: 'block', styles: [], lists: []})],
+      fieldset: 'infos',
+    }),
+    defineField({
+      name: 'siteArea',
+      title: 'Site Area',
+      type: 'string',
+      fieldset: 'infos',
+    }),
+    defineField({
+      name: 'spaceArea',
+      title: 'Space Area',
+      type: 'string',
+      fieldset: 'infos',
+    }),
+    defineField({
+      name: 'totalArea',
+      title: 'Total Area',
+      type: 'string',
+      fieldset: 'infos',
+    }),
+    defineField({
+      name: 'buildingCoverage',
+      title: 'Building Coverage',
+      type: 'string',
+      fieldset: 'infos',
+    }),
+    defineField({
+      name: 'far',
+      title: 'FAR',
+      description: 'Floor area ratio',
+      type: 'string',
+      fieldset: 'infos',
+    }),
+    defineField({
+      name: 'program',
+      title: 'Program',
+      type: 'string',
+      fieldset: 'infos',
+    }),
+    defineField({
+      name: 'team',
+      title: 'Team',
+      type: 'string',
+      fieldset: 'infos',
+    }),
+  ],
+  fieldsets: [
+    {
+      name: 'infos',
+      title: 'Infos (project detail expander)',
+      description:
+        'Powers the "Infos" section on the project detail page. Location and Result above are reused as the Site and Result spec rows.',
+      options: {collapsible: true, collapsed: false},
+    },
   ],
   preview: {
     select: {
