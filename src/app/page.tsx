@@ -158,7 +158,7 @@ function TickerPanel({
 
   return (
     <div
-      className={`flex-1 bg-[#f6f4ee] overflow-hidden flex ${mobile ? 'gap-2 pt-[72px]' : 'gap-4 px-8'}`}
+      className={`flex-1 bg-[#f6f4ee] overflow-hidden flex ${mobile ? 'gap-2' : 'gap-4 px-8'}`}
       onWheel={onWheel}
     >
       <div className="flex-1 overflow-hidden">
