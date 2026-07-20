@@ -129,13 +129,8 @@ export default function ProjectDetailView({
             </button>
 
             <div
-              className="relative w-full overflow-hidden rounded-[4px] bg-[#f6f4ee]"
-              style={{
-                aspectRatio: current.asset?.metadata?.dimensions
-                  ? `${current.asset.metadata.dimensions.width} / ${current.asset.metadata.dimensions.height}`
-                  : '16 / 9',
-                maxHeight: '70vh',
-              }}
+              className="relative w-full overflow-hidden rounded-[4px] bg-[#f6f4ee] h-[250px] sm:h-[450px]"
+              style={{ maxWidth: '800px' }}
             >
               <img
                 src={urlForImage(current.asset).width(1600).url()}
