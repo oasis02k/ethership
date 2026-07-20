@@ -178,7 +178,7 @@ export default function ProjectDetailView({
         </div>
 
         {hasInfos && showInfos && (
-          <div className="flex flex-col items-start gap-6 w-full max-w-[800px]">
+          <div className="flex flex-col items-start gap-6 w-full max-w-[1024px]">
             {project.description && project.description.length > 0 && (
               <div
                 className="columns-1 sm:columns-2 gap-6 text-[#0f100e] text-[14px] tracking-[-0.42px] leading-[1.5]"
