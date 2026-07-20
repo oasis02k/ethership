@@ -97,7 +97,7 @@ export default function Menu({ isOpen, onClose }: MenuProps) {
       }}
     >
       {/* ── Navbar ──────────────────────────────────────────────────── */}
-      <div className="absolute top-4 left-6 right-6 h-14 flex items-center justify-between px-6 z-10">
+      <div className="absolute top-4 left-5 right-5 md:left-6 md:right-6 h-14 flex items-center justify-between px-6 z-10">
         <div className="relative shrink-0" style={{ height: '15.984px', width: '167.537px' }}>
           <img alt="Ether Ship" className="absolute inset-0 h-full w-full object-contain object-left" src={imgLogo} />
         </div>
