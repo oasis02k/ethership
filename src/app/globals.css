@@ -19,21 +19,16 @@ html, body {
   animation: image-apparition 1.4s ease both;
 }
 
-/* Page transition: four full-width bars cascade down to cover the
-   viewport, hold briefly, then continue down and off — each bar staggered
-   slightly after the one above it, so the cover and reveal both read as a
-   single wave sweeping top to bottom. This is a sibling overlay
-   (position: fixed), never an ancestor of the routed content — animating
-   `transform` on an ancestor of a position:fixed element creates a new
-   containing block and breaks this site's fixed full-viewport page
-   layouts. */
-@keyframes page-blind-sweep {
-  0%   { transform: translateY(-100vh); }
-  38%  { transform: translateY(0); }
-  58%  { transform: translateY(0); }
-  100% { transform: translateY(100vh); }
-}
-
+/* Page transition: four full-width bars seal the screen shut one after
+   another (top to bottom), hold, then lift together to reveal the new
+   page. Sequenced with GSAP in PageTransition.tsx rather than plain CSS
+   keyframes, since keeping every bar's "fully sealed" moment aligned while
+   each enters at a different, non-overlapping time isn't expressible with
+   a single keyframe + per-bar animation-delay.
+   This is a sibling overlay (position: fixed), never an ancestor of the
+   routed content — animating `transform` on an ancestor of a
+   position:fixed element creates a new containing block and breaks this
+   site's fixed full-viewport page layouts. */
 .page-curtain {
   position: fixed;
   inset: 0;
@@ -46,13 +41,8 @@ html, body {
 .page-curtain-bar {
   flex: 1 0 0;
   background: #f6f4ee;
-  animation: page-blind-sweep 0.8s cubic-bezier(0.65, 0, 0.35, 1) both;
+  transform: translateY(-100vh);
 }
-
-.page-curtain-bar:nth-child(1) { animation-delay: 0ms; }
-.page-curtain-bar:nth-child(2) { animation-delay: 90ms; }
-.page-curtain-bar:nth-child(3) { animation-delay: 180ms; }
-.page-curtain-bar:nth-child(4) { animation-delay: 270ms; }
 
 
 
