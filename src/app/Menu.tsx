@@ -13,6 +13,7 @@ const FOOTER_LINKS = ['ABOUT', 'PROJECT', 'ETHER ART', 'PRESS'];
 const ROUTES: Partial<Record<string, string>> = {
   HOME: '/',
   PROJECT: '/project',
+  'ETHER ART': '/ether-art',
 };
 
 function NavLink({
@@ -234,7 +235,7 @@ export default function Menu({ isOpen, onClose }: MenuProps) {
               <NavLink label="PROJECT" onNavigate={onClose} className="flex-1 cursor-pointer" />
             </div>
             <div className="flex gap-4">
-              <span className="flex-1 cursor-pointer">ETHER ART</span>
+              <NavLink label="ETHER ART" onNavigate={onClose} className="flex-1 cursor-pointer" />
               <span className="flex-1 cursor-pointer">PRESS</span>
             </div>
           </div>

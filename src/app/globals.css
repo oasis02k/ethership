@@ -10,6 +10,15 @@ html, body {
   font-family: var(--font-space-grotesk), sans-serif;
 }
 
+/* Tailwind v4 dropped the default `cursor: pointer` on <button> (matching
+   the browser's native `cursor: default`), so every button in the app was
+   showing the plain arrow cursor. Restore it site-wide instead of adding
+   `cursor-pointer` to each button individually. */
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]) {
+  cursor: pointer;
+}
+
 @keyframes image-apparition {
   from { opacity: 0; }
   to   { opacity: 1; }
@@ -17,6 +26,10 @@ html, body {
 
 .card-inner {
   animation: image-apparition 1.4s ease both;
+}
+
+.carousel-image {
+  animation: image-apparition 0.4s ease both;
 }
 
 /* Page transition: four full-width bars seal the screen shut one after
@@ -34,7 +47,7 @@ html, body {
   inset: 0;
   z-index: 200;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   pointer-events: none;
 }
 
@@ -42,6 +55,7 @@ html, body {
   flex: 1 0 0;
   background: #f6f4ee;
   transform: translateY(-100vh);
+  will-change: transform;
 }
 
 
