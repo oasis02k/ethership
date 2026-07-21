@@ -1,11 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { PortableText, type PortableTextBlock } from 'next-sanity';
+import gsap from 'gsap';
 import Nav from '../../Nav';
 import Menu from '../../Menu';
 import { urlForImage } from '@/sanity/image';
+import { getLenis } from '../../SmoothScroll';
 
 interface ProjectImage {
   _key: string;
@@ -79,6 +81,64 @@ export default function ProjectDetailView({
   const [menuOpen, setMenuOpen] = useState(false);
   const [index, setIndex] = useState(0);
   const [showInfos, setShowInfos] = useState(false);
+  const infoRef = useRef<HTMLDivElement>(null);
+
+  // Stagger the panel's content in and scroll it into view when opened — it
+  // opens below the INFOS button, which can end up below the fold on
+  // shorter viewports.
+  // useLayoutEffect (not useEffect) so the hidden starting state is set
+  // before the browser paints — otherwise the content flashes fully visible
+  // for a frame first, then GSAP's "from" state snaps it back to invisible,
+  // which reads as a glitch/flash rather than a fade.
+  useLayoutEffect(() => {
+    if (!showInfos) return;
+
+    const el = infoRef.current;
+    if (!el) return;
+
+    const items = el.querySelectorAll('.info-stagger-item');
+    gsap.fromTo(
+      items,
+      { opacity: 0, y: 16 },
+      { opacity: 1, y: 0, duration: 0.5, stagger: 0.08, ease: 'power2.out' },
+    );
+
+    const lenis = getLenis();
+    if (lenis) {
+      // The panel just mounted and made the page taller; Lenis's cached
+      // scroll limit (from a ResizeObserver) hasn't caught up to that yet,
+      // so scrollTo would clamp against the old, shorter height. Force it
+      // to recompute synchronously first.
+      lenis.resize();
+      lenis.scrollTo(el, { offset: -24, duration: 1 });
+    } else {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [showInfos]);
+
+  // Closing needs to scroll BEFORE the panel unmounts, not after: if we
+  // collapse the panel first, the page instantly shrinks and the browser
+  // immediately clamps scrollY to fit — Lenis's smooth scrollTo would then
+  // be animating from 0 to 0 (nothing left to travel), which is why it read
+  // as an instant jump instead of a smooth scroll. So scroll first, while
+  // the tall content is still there to scroll away from, and only collapse
+  // once that finishes.
+  //
+  // Scroll to the literal page top (0), not to the button's element
+  // position: the button's target position is only valid while the tall
+  // panel still exists below it. The instant it unmounts, the document
+  // collapses and that target no longer exists in the new, much shorter
+  // page — so the browser clamps scrollY down anyway, producing a second,
+  // jarring jump right as the smooth part finishes.
+  const closeInfos = () => {
+    const lenis = getLenis();
+    if (lenis) {
+      lenis.scrollTo(0, { duration: 1, onComplete: () => setShowInfos(false) });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(() => setShowInfos(false), 600);
+    }
+  };
 
   const images = project.images ?? [];
   const total = images.length;
@@ -86,6 +146,15 @@ export default function ProjectDetailView({
 
   const goPrev = () => setIndex((i) => (i - 1 + total) % total);
   const goNext = () => setIndex((i) => (i + 1) % total);
+
+  // Auto-advance every 4s. Re-armed off `index` itself (rather than a
+  // persistent setInterval) so a manual prev/next click resets the countdown
+  // instead of the next auto-tick landing right on top of it.
+  useEffect(() => {
+    if (total <= 1) return;
+    const id = setTimeout(() => setIndex((i) => (i + 1) % total), 4000);
+    return () => clearTimeout(id);
+  }, [index, total]);
 
   const specRows: { label: string; value: string }[] = [
     { label: 'Site Area', value: project.siteArea },
@@ -143,9 +212,10 @@ export default function ProjectDetailView({
               style={{ maxWidth: '1024px' }}
             >
               <img
+                key={current._key}
                 src={urlForImage(current.asset).width(1600).url()}
                 alt={current.alt || project.title}
-                className="absolute inset-0 w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-cover carousel-image"
               />
             </div>
 
@@ -179,7 +249,7 @@ export default function ProjectDetailView({
           </div>
           {hasInfos && (
             <button
-              onClick={() => setShowInfos((v) => !v)}
+              onClick={() => (showInfos ? closeInfos() : setShowInfos(true))}
               className="flex items-center gap-1.5 font-medium text-[20px] tracking-[-0.6px] text-[#0f100e] hover:text-[#bb9a6d] transition-colors cursor-pointer"
             >
               {showInfos ? 'CLOSE' : 'INFOS'}
@@ -194,10 +264,10 @@ export default function ProjectDetailView({
         </div>
 
         {hasInfos && showInfos && (
-          <div className="flex flex-col items-start gap-6 w-full max-w-[1024px]">
+          <div ref={infoRef} className="flex flex-col items-start gap-6 w-full max-w-[1024px]">
             {project.description && project.description.length > 0 && (
               <div
-                className="columns-1 sm:columns-2 gap-6 text-[#0f100e] text-[14px] tracking-[-0.42px] leading-[1.5]"
+                className="info-stagger-item columns-1 sm:columns-2 gap-6 text-[#0f100e] text-[14px] tracking-[-0.42px] leading-[1.5]"
                 style={{ fontFamily: 'var(--font-space-grotesk), sans-serif' }}
               >
                 <PortableText
@@ -214,7 +284,7 @@ export default function ProjectDetailView({
             {specRows.length > 0 && (
               <div className="w-full border-b border-[rgba(15,16,14,0.12)]">
                 {specRows.map(({ label, value }) => (
-                  <div key={label} className="flex items-start border-t border-[rgba(15,16,14,0.12)]">
+                  <div key={label} className="info-stagger-item flex items-start border-t border-[rgba(15,16,14,0.12)]">
                     <p
                       className="flex-1 p-4 uppercase text-[14px] tracking-[-0.42px] text-[#0f100e]"
                       style={{ fontFamily: 'var(--font-ibm-plex-mono)' }}
