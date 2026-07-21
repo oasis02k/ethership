@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Space_Grotesk, Cormorant_Garamond, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import PageTransition from "./PageTransition";
+import SmoothScroll from "./SmoothScroll";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -34,6 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${cormorantGaramond.variable} ${ibmPlexMono.variable}`}>
       <body>
+        <SmoothScroll />
         <PageTransition>{children}</PageTransition>
       </body>
     </html>
