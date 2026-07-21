@@ -4,6 +4,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Menu from './Menu';
 import Nav from './Nav';
+import { useTransitionReady } from './PageTransition';
+import CustomCursor from './CustomCursor';
 
 export interface TickerImage {
   slug: string;
@@ -49,7 +51,8 @@ function ImageTile({
   return (
     <Link
       href={`/project/${slug}`}
-      className={`relative overflow-hidden block ${className}`}
+      className={`relative overflow-hidden block cursor-none ${className}`}
+      data-cursor-target
       style={{
         aspectRatio: ratio.replace('/', ' / '),
         opacity: show ? 1 : 0,
@@ -106,7 +109,7 @@ function TickerPanel({
 }) {
   const strip1Ref = useRef<HTMLDivElement>(null);
   const strip2Ref = useRef<HTMLDivElement>(null);
-  const a = useRef({ y1: 0, y2: 0, vel: 0, h: 0, prev: 0, raf: 0 });
+  const a = useRef({ y1: 0, y2: 0, vel: 0, h1: 0, h2: 0, prev: 0, raf: 0 });
 
   useEffect(() => {
     if (!started) return;
@@ -115,8 +118,13 @@ function TickerPanel({
     const s2 = strip2Ref.current;
     if (!s1 || !s2) return;
 
-    a.current.h = s1.scrollHeight / 2;
-    a.current.y2 = -(a.current.h / 3);
+    // Each column loops on its own content height — col1 and col2 can differ
+    // (different image counts/aspect ratios), so a shared threshold made the
+    // shorter column scroll past its duplicated set into empty space before
+    // wrapping.
+    a.current.h1 = s1.scrollHeight / 2;
+    a.current.h2 = s2.scrollHeight / 2;
+    a.current.y2 = -(a.current.h2 / 3);
     a.current.prev = 0;
 
     const tick = (ts: number) => {
@@ -130,12 +138,15 @@ function TickerPanel({
       a.current.y1 -= move;
       a.current.y2 -= move;
 
-      const h = a.current.h;
-      if (h > 0) {
-        if (a.current.y1 < -h) a.current.y1 += h;
-        if (a.current.y1 > 0)  a.current.y1 -= h;
-        if (a.current.y2 < -h) a.current.y2 += h;
-        if (a.current.y2 > 0)  a.current.y2 -= h;
+      const h1 = a.current.h1;
+      const h2 = a.current.h2;
+      if (h1 > 0) {
+        if (a.current.y1 < -h1) a.current.y1 += h1;
+        if (a.current.y1 > 0)   a.current.y1 -= h1;
+      }
+      if (h2 > 0) {
+        if (a.current.y2 < -h2) a.current.y2 += h2;
+        if (a.current.y2 > 0)   a.current.y2 -= h2;
       }
 
       s1.style.transform = `translateY(${a.current.y1}px)`;
@@ -219,6 +230,10 @@ export default function HomeClient({ col1, col2 }: { col1: TickerImage[]; col2: 
   const [delays, setDelays] = useState<number[]>([]);
   const [tickerStarted, setTickerStarted] = useState(false);
 
+  // Hold the curtain closed until every tile has faded in, so the reveal
+  // never uncovers a page that's still popping images in underneath it.
+  useTransitionReady(tickerStarted);
+
   const handleImageLoaded = useCallback((src: string) => {
     loadedSrcs.current.add(src);
     if (loadedSrcs.current.size >= totalImages && !triggeredRef.current) {
@@ -237,6 +252,7 @@ export default function HomeClient({ col1, col2 }: { col1: TickerImage[]; col2: 
 
   return (
     <>
+      <CustomCursor />
       <Nav onMenuClick={() => setMenuOpen(true)} />
 
       {/* ── Desktop (≥ 768 px) ─────────────────────────────────────────── */}
@@ -264,13 +280,20 @@ export default function HomeClient({ col1, col2 }: { col1: TickerImage[]; col2: 
           </div>
 
           <div className="flex gap-4 items-center">
-            <Link href="/project" className="bg-[#0f100e] text-[#f6f4ee] font-medium text-[16px] tracking-[-0.32px] h-12 px-4 rounded-[4px] flex items-center whitespace-nowrap">
-              See More Projects
+            <Link
+              href="/project"
+              className="group relative overflow-hidden bg-[#0f100e] text-[#f6f4ee] font-medium text-[16px] tracking-[-0.32px] h-12 px-4 rounded-[4px] flex items-center whitespace-nowrap"
+            >
+              <span className="absolute inset-0 bg-[#bb9a6d] origin-left scale-x-0 transition-transform duration-300 ease-out group-hover:scale-x-100" />
+              <span className="relative">See More Projects</span>
             </Link>
-            <button className="bg-[#f6f4ee] border border-[#c8c3b9] text-[#0f100e] font-medium text-[16px] tracking-[-0.32px] h-12 px-4 rounded-[4px] flex items-center gap-2 whitespace-nowrap">
-              Ether Art
-              <ArrowRight color="#0f100e" />
-            </button>
+            <Link href="/ether-art" className="group relative overflow-hidden bg-[#f6f4ee] border border-[#c8c3b9] text-[#0f100e] font-medium text-[16px] tracking-[-0.32px] h-12 px-4 rounded-[4px] flex items-center gap-2 whitespace-nowrap transition-colors duration-300 hover:border-[#bb9a6d]">
+              <span className="absolute inset-0 bg-[#bb9a6d] origin-left scale-x-0 transition-transform duration-300 ease-out group-hover:scale-x-100" />
+              <span className="relative transition-colors duration-300 group-hover:text-white">Ether Art</span>
+              <span className="relative transition-transform duration-300 ease-out group-hover:translate-x-1 group-hover:text-white">
+                <ArrowRight />
+              </span>
+            </Link>
           </div>
         </div>
 
@@ -314,13 +337,20 @@ export default function HomeClient({ col1, col2 }: { col1: TickerImage[]; col2: 
             </div>
           </div>
           <div className="flex gap-4 items-center justify-center">
-            <Link href="/project" className="bg-[#0f100e] text-[#f6f4ee] font-medium text-[16px] tracking-[-0.32px] h-12 px-4 rounded-[4px] flex items-center whitespace-nowrap">
-              See More Projects
+            <Link
+              href="/project"
+              className="group relative overflow-hidden bg-[#0f100e] text-[#f6f4ee] font-medium text-[16px] tracking-[-0.32px] h-12 px-4 rounded-[4px] flex items-center whitespace-nowrap"
+            >
+              <span className="absolute inset-0 bg-[#bb9a6d] origin-left scale-x-0 transition-transform duration-300 ease-out group-hover:scale-x-100" />
+              <span className="relative">See More Projects</span>
             </Link>
-            <button className="bg-[#f6f4ee] border border-[#c8c3b9] text-[#0f100e] font-medium text-[16px] tracking-[-0.32px] h-12 px-4 rounded-[4px] flex items-center gap-2 whitespace-nowrap">
-              Ether Art
-              <ArrowRight color="#0f100e" />
-            </button>
+            <Link href="/ether-art" className="group relative overflow-hidden bg-[#f6f4ee] border border-[#c8c3b9] text-[#0f100e] font-medium text-[16px] tracking-[-0.32px] h-12 px-4 rounded-[4px] flex items-center gap-2 whitespace-nowrap transition-colors duration-300 hover:border-[#bb9a6d]">
+              <span className="absolute inset-0 bg-[#bb9a6d] origin-left scale-x-0 transition-transform duration-300 ease-out group-hover:scale-x-100" />
+              <span className="relative transition-colors duration-300 group-hover:text-white">Ether Art</span>
+              <span className="relative transition-transform duration-300 ease-out group-hover:translate-x-1 group-hover:text-white">
+                <ArrowRight />
+              </span>
+            </Link>
           </div>
         </div>
 
