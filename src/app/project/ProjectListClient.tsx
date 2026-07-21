@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Menu from '../Menu';
 import Nav from '../Nav';
+import CustomCursor from '../CustomCursor';
 
 type ProjectType = 'building' | 'object' | 'ether-art';
 
@@ -53,7 +54,11 @@ function ProjectTypeTag({ type }: { type: ProjectType }) {
 
 function ProjectCard({ project }: { project: Project }) {
   return (
-    <Link href={`/project/${project.slug}`} className="block break-inside-avoid mb-8 md:mb-12">
+    <Link
+      href={`/project/${project.slug}`}
+      className="block break-inside-avoid mb-8 md:mb-12 cursor-none"
+      data-cursor-target
+    >
       <div className="relative w-full overflow-hidden" style={{ aspectRatio: project.ratio.replace('/', ' / ') }}>
         <img src={project.src} alt={project.title} className="absolute inset-0 w-full h-full object-cover" />
       </div>
@@ -187,11 +192,12 @@ export default function ProjectListClient({ projects: PROJECTS }: { projects: Pr
     setVisibleCount(PAGE_SIZE);
   };
 
-  const visible = view === 'list' ? sorted.slice(0, visibleCount) : sorted;
-  const hasMore = view === 'list' && visibleCount < sorted.length;
+  const visible = sorted.slice(0, visibleCount);
+  const hasMore = visibleCount < sorted.length;
 
   return (
     <>
+      <CustomCursor />
       <Nav onMenuClick={() => setMenuOpen(true)} />
 
       <div className="min-h-screen bg-white flex flex-col items-center pt-[104px] md:pt-[128px] pb-16 md:pb-24 px-4 md:px-6">
@@ -236,28 +242,27 @@ export default function ProjectListClient({ projects: PROJECTS }: { projects: Pr
           {/* Project list */}
           {view === 'grid' ? (
             <div className="columns-1 sm:columns-2 lg:columns-3 gap-4">
-              {sorted.map((project, i) => (
+              {visible.map((project, i) => (
                 <ProjectCard key={`${project.title}-${project.year}-${i}`} project={project} />
               ))}
             </div>
           ) : (
-            <>
-              <ProjectTable
-                projects={visible}
-                sortDir={sortDir}
-                onToggleSort={() => setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))}
-              />
-              {hasMore && (
-                <div className="flex justify-center w-full">
-                  <button
-                    onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
-                    className="bg-[#f6f4ee] border border-[#c8c3b9] text-[#0f100e] font-medium text-[16px] tracking-[-0.32px] h-12 px-4 rounded-[4px] whitespace-nowrap"
-                  >
-                    Load More
-                  </button>
-                </div>
-              )}
-            </>
+            <ProjectTable
+              projects={visible}
+              sortDir={sortDir}
+              onToggleSort={() => setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))}
+            />
+          )}
+
+          {hasMore && (
+            <div className="flex justify-center w-full">
+              <button
+                onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+                className="bg-[#f6f4ee] border border-[#c8c3b9] text-[#0f100e] font-medium text-[16px] tracking-[-0.32px] h-12 px-4 rounded-[4px] whitespace-nowrap"
+              >
+                Load More
+              </button>
+            </div>
           )}
 
         </div>
