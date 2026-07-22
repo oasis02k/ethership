@@ -1,15 +1,15 @@
 import { client } from '@/sanity/client';
-import { PROJECT_CARDS_QUERY } from '@/sanity/queries';
+import { HOME_PAGE_QUERY } from '@/sanity/queries';
 import type { ProjectCard } from '@/sanity/types';
 import HomeClient, { type TickerImage } from './HomeClient';
 
 const options = { next: { revalidate: 60 } };
 
 export default async function Home() {
-  const projects = await client.fetch<ProjectCard[]>(PROJECT_CARDS_QUERY, {}, options);
+  const projects = await client.fetch<(ProjectCard | null)[]>(HOME_PAGE_QUERY, {}, options);
 
   const images: TickerImage[] = projects
-    .filter((p) => p.cover?.asset?.url)
+    .filter((p): p is ProjectCard => Boolean(p?.cover?.asset?.url))
     .map((p) => {
       const dimensions = p.cover!.asset!.metadata?.dimensions;
       return {

@@ -48,6 +48,25 @@ export const PROJECT_CARDS_QUERY = defineQuery(`
   }
 `);
 
+export const HOME_PAGE_QUERY = defineQuery(`
+  *[_type == "homePage"][0].selectedProjects[]->{
+    _id,
+    title,
+    "slug": slug.current,
+    year,
+    type,
+    location,
+    result,
+    "cover": images[0]{
+      alt,
+      asset->{
+        url,
+        metadata { dimensions { width, height } }
+      }
+    }
+  }
+`);
+
 export const PROJECT_ORDER_QUERY = defineQuery(`
   *[_type == "project" && defined(slug.current)] | order(year desc, _createdAt desc){
     "slug": slug.current,
