@@ -206,7 +206,7 @@ export default function ProjectDetailView({
                 key={current._key}
                 src={urlForImage(current.asset).width(1600).url()}
                 alt={current.alt || project.title}
-                className="absolute inset-0 w-full h-full object-cover carousel-image"
+                className="absolute inset-0 w-full h-full object-contain carousel-image"
               />
             </div>
 
