@@ -12,6 +12,7 @@ const FOOTER_LINKS = ['ABOUT', 'PROJECT', 'ETHER ART', 'PRESS'];
 // Only items with a real destination navigate — the rest stay inert placeholders.
 const ROUTES: Partial<Record<string, string>> = {
   HOME: '/',
+  ABOUT: '/about',
   PROJECT: '/project',
   'ETHER ART': '/ether-art',
 };
@@ -231,7 +232,7 @@ export default function Menu({ isOpen, onClose }: MenuProps) {
         <div>
           <div className="px-10 py-5 flex flex-col gap-4 text-white text-[14px] uppercase tracking-[-0.02em]">
             <div className="flex gap-4">
-              <span className="flex-1 cursor-pointer">ABOUT</span>
+              <NavLink label="ABOUT" onNavigate={onClose} className="flex-1 cursor-pointer" />
               <NavLink label="PROJECT" onNavigate={onClose} className="flex-1 cursor-pointer" />
             </div>
             <div className="flex gap-4">

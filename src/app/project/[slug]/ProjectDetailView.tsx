@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { PortableText, type PortableTextBlock } from 'next-sanity';
 import gsap from 'gsap';
@@ -146,15 +146,6 @@ export default function ProjectDetailView({
 
   const goPrev = () => setIndex((i) => (i - 1 + total) % total);
   const goNext = () => setIndex((i) => (i + 1) % total);
-
-  // Auto-advance every 4s. Re-armed off `index` itself (rather than a
-  // persistent setInterval) so a manual prev/next click resets the countdown
-  // instead of the next auto-tick landing right on top of it.
-  useEffect(() => {
-    if (total <= 1) return;
-    const id = setTimeout(() => setIndex((i) => (i + 1) % total), 4000);
-    return () => clearTimeout(id);
-  }, [index, total]);
 
   const specRows: { label: string; value: string }[] = [
     { label: 'Site Area', value: project.siteArea },

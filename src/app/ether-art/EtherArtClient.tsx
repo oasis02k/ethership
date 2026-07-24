@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Menu from '../Menu';
 import Nav from '../Nav';
+import YearRow from '../YearRow';
 
 interface CollageImage {
   src: string;
@@ -74,23 +75,11 @@ interface FooterLink {
 }
 
 const FOOTER_LINKS: FooterLink[] = [
-  { label: 'ABOUT' },
+  { label: 'ABOUT', href: '/about' },
   { label: 'PROJECT', href: '/project' },
   { label: 'ETHER ART', href: '/ether-art' },
   { label: 'PRESS' },
 ];
-
-function ExhibitionRow({ year, title, location }: Exhibition) {
-  return (
-    <div className="flex gap-4 items-start py-4 border-b border-[rgba(15,16,14,0.24)] w-full text-[18px] tracking-[-0.36px] leading-[1.5]">
-      <p className="font-bold text-[#bb9a6d] w-[70px] shrink-0">{year}</p>
-      <div className="flex flex-1 gap-6 items-center min-w-0">
-        <p className="flex-1 min-w-0 font-medium text-[#0f100e]">{title}</p>
-        <p className="flex-1 min-w-0 font-normal text-[rgba(15,16,14,0.56)]">{location}</p>
-      </div>
-    </div>
-  );
-}
 
 export default function EtherArtClient() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -190,7 +179,7 @@ export default function EtherArtClient() {
             </p>
             <div className="flex flex-col items-start w-full">
               {EXHIBITIONS.map((ex, i) => (
-                <ExhibitionRow key={i} {...ex} />
+                <YearRow key={i} year={ex.year} title={ex.title} description={ex.location} />
               ))}
             </div>
           </div>
