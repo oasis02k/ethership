@@ -66,7 +66,7 @@ export const project = defineType({
           ],
         }),
       ],
-      validation: (rule) => rule.required().min(1).max(8),
+      validation: (rule) => rule.required().min(1).max(10),
     }),
     defineField({
       name: 'description',
