@@ -199,7 +199,7 @@ export default function ProjectDetailView({
             </button>
 
             <div
-              className="relative w-full overflow-hidden rounded-[4px] bg-[#f6f4ee] h-[250px] sm:h-[576px]"
+              className="relative w-full overflow-hidden rounded-[4px] bg-white h-[250px] sm:h-[576px]"
               style={{ maxWidth: '1024px' }}
             >
               <img
