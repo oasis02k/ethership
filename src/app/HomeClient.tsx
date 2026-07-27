@@ -1,7 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import gsap from 'gsap';
 import Menu from './Menu';
 import Nav from './Nav';
 import { useTransitionReady } from './PageTransition';
@@ -213,11 +214,82 @@ function TickerPanel({
   );
 }
 
+// Slot-machine style text reel: on hover the current label spins out upward
+// while a duplicate spins in from below. Driven by GSAP (rather than CSS
+// transitions) so it matches the rest of the site's animation stack.
+function SlotText({ children, hovered }: { children: string; hovered: boolean }) {
+  const topRef = useRef<HTMLSpanElement>(null);
+  const bottomRef = useRef<HTMLSpanElement>(null);
+
+  // Set the reel's resting position through GSAP (not a plain CSS transform
+  // in JSX) — GSAP tracks yPercent in its own cache, and a React-owned
+  // transform string on the same element fights it, producing a stacked
+  // offset that threw both copies of the text out of view.
+  useLayoutEffect(() => {
+    gsap.set(bottomRef.current, { yPercent: 100 });
+  }, []);
+
+  useEffect(() => {
+    gsap.to(topRef.current, { yPercent: hovered ? -100 : 0, duration: 0.3, ease: 'power2.out' });
+    gsap.to(bottomRef.current, { yPercent: hovered ? 0 : 100, duration: 0.3, ease: 'power2.out' });
+  }, [hovered]);
+
+  return (
+    <span
+      className="relative inline-block overflow-hidden align-middle"
+      style={{ height: '1.3em', lineHeight: '1.3em' }}
+    >
+      <span ref={topRef} className="block">{children}</span>
+      <span ref={bottomRef} className="absolute left-0 top-0 block">{children}</span>
+    </span>
+  );
+}
+
 function ArrowRight({ color = 'currentColor' }: { color?: string }) {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
       <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
+  );
+}
+
+function HeroButton({
+  href,
+  variant,
+  showArrow = false,
+  children,
+}: {
+  href: string;
+  variant: 'primary' | 'secondary';
+  showArrow?: boolean;
+  children: string;
+}) {
+  const [hovered, setHovered] = useState(false);
+  const arrowRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (!arrowRef.current) return;
+    gsap.to(arrowRef.current, { x: hovered ? 4 : 0, duration: 0.3, ease: 'power2.out' });
+  }, [hovered]);
+
+  const variantClass = variant === 'primary'
+    ? 'bg-[#0f100e] text-[#f6f4ee]'
+    : 'bg-[#f6f4ee] border border-[#c8c3b9] text-[#0f100e] transition-colors duration-300 hover:border-[#bb9a6d]';
+
+  return (
+    <Link
+      href={href}
+      className={`relative overflow-hidden font-medium text-[16px] tracking-[-0.32px] h-12 px-4 rounded-[4px] flex items-center gap-2 whitespace-nowrap ${variantClass}`}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <SlotText hovered={hovered}>{children}</SlotText>
+      {showArrow && (
+        <span ref={arrowRef} className="relative inline-flex">
+          <ArrowRight />
+        </span>
+      )}
+    </Link>
   );
 }
 
@@ -280,20 +352,8 @@ export default function HomeClient({ col1, col2 }: { col1: TickerImage[]; col2: 
           </div>
 
           <div className="flex gap-4 items-center">
-            <Link
-              href="/project"
-              className="group relative overflow-hidden bg-[#0f100e] text-[#f6f4ee] font-medium text-[16px] tracking-[-0.32px] h-12 px-4 rounded-[4px] flex items-center whitespace-nowrap"
-            >
-              <span className="absolute inset-0 bg-[#bb9a6d] origin-left scale-x-0 transition-transform duration-300 ease-out group-hover:scale-x-100" />
-              <span className="relative">See More Projects</span>
-            </Link>
-            <Link href="/ether-art" className="group relative overflow-hidden bg-[#f6f4ee] border border-[#c8c3b9] text-[#0f100e] font-medium text-[16px] tracking-[-0.32px] h-12 px-4 rounded-[4px] flex items-center gap-2 whitespace-nowrap transition-colors duration-300 hover:border-[#bb9a6d]">
-              <span className="absolute inset-0 bg-[#bb9a6d] origin-left scale-x-0 transition-transform duration-300 ease-out group-hover:scale-x-100" />
-              <span className="relative transition-colors duration-300 group-hover:text-white">Ether Art</span>
-              <span className="relative transition-transform duration-300 ease-out group-hover:translate-x-1 group-hover:text-white">
-                <ArrowRight />
-              </span>
-            </Link>
+            <HeroButton href="/project" variant="primary" showArrow>See More Projects</HeroButton>
+            <HeroButton href="/ether-art" variant="secondary" showArrow>Ether Art</HeroButton>
           </div>
         </div>
 
@@ -337,20 +397,8 @@ export default function HomeClient({ col1, col2 }: { col1: TickerImage[]; col2: 
             </div>
           </div>
           <div className="flex gap-4 items-center justify-center">
-            <Link
-              href="/project"
-              className="group relative overflow-hidden bg-[#0f100e] text-[#f6f4ee] font-medium text-[16px] tracking-[-0.32px] h-12 px-4 rounded-[4px] flex items-center whitespace-nowrap"
-            >
-              <span className="absolute inset-0 bg-[#bb9a6d] origin-left scale-x-0 transition-transform duration-300 ease-out group-hover:scale-x-100" />
-              <span className="relative">See More Projects</span>
-            </Link>
-            <Link href="/ether-art" className="group relative overflow-hidden bg-[#f6f4ee] border border-[#c8c3b9] text-[#0f100e] font-medium text-[16px] tracking-[-0.32px] h-12 px-4 rounded-[4px] flex items-center gap-2 whitespace-nowrap transition-colors duration-300 hover:border-[#bb9a6d]">
-              <span className="absolute inset-0 bg-[#bb9a6d] origin-left scale-x-0 transition-transform duration-300 ease-out group-hover:scale-x-100" />
-              <span className="relative transition-colors duration-300 group-hover:text-white">Ether Art</span>
-              <span className="relative transition-transform duration-300 ease-out group-hover:translate-x-1 group-hover:text-white">
-                <ArrowRight />
-              </span>
-            </Link>
+            <HeroButton href="/project" variant="primary" showArrow>See More Projects</HeroButton>
+            <HeroButton href="/ether-art" variant="secondary" showArrow>Ether Art</HeroButton>
           </div>
         </div>
 
