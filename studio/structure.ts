@@ -9,5 +9,8 @@ export const structure: StructureResolver = (S) =>
         .id('homePage')
         .child(S.document().schemaType('homePage').documentId('homePage')),
       S.divider(),
-      ...S.documentTypeListItems().filter((item) => item.getId() !== 'homePage'),
+      S.documentTypeListItem('newsItem').child(
+        S.documentTypeList('newsItem').defaultOrdering([{field: 'date', direction: 'desc'}])
+      ),
+      ...S.documentTypeListItems().filter((item) => item.getId() !== 'homePage' && item.getId() !== 'newsItem'),
     ])
