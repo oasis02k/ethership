@@ -6,8 +6,8 @@ import Link from 'next/link';
 const imgLogo     = '/logo.svg';
 const imgArtPhoto = '/menu-image.jpg';
 
-const NAV_ITEMS    = ['HOME', 'ABOUT', 'PROJECT', 'ETHER ART', 'PRESS'];
-const FOOTER_LINKS = ['ABOUT', 'PROJECT', 'ETHER ART', 'PRESS'];
+const NAV_ITEMS    = ['HOME', 'ABOUT', 'PROJECT', 'ETHER ART', 'NEWS'];
+const FOOTER_LINKS = ['ABOUT', 'PROJECT', 'ETHER ART', 'NEWS'];
 
 // Only items with a real destination navigate — the rest stay inert placeholders.
 const ROUTES: Partial<Record<string, string>> = {
@@ -15,6 +15,7 @@ const ROUTES: Partial<Record<string, string>> = {
   ABOUT: '/about',
   PROJECT: '/project',
   'ETHER ART': '/ether-art',
+  NEWS: '/press',
 };
 
 function NavLink({
@@ -237,7 +238,7 @@ export default function Menu({ isOpen, onClose }: MenuProps) {
             </div>
             <div className="flex gap-4">
               <NavLink label="ETHER ART" onNavigate={onClose} className="flex-1 cursor-pointer" />
-              <span className="flex-1 cursor-pointer">PRESS</span>
+              <NavLink label="NEWS" onNavigate={onClose} className="flex-1 cursor-pointer" />
             </div>
           </div>
           <div className="border-t border-[rgba(246,244,238,0.12)] h-12 flex items-center px-5">

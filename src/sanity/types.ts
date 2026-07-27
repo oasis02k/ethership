@@ -1,5 +1,13 @@
 export type ProjectType = 'building' | 'object' | 'ether-art';
 
+export interface NewsItem {
+  _id: string;
+  date: string;
+  title: string;
+  location?: string;
+  link?: string;
+}
+
 export interface ProjectCard {
   _id: string;
   title: string;

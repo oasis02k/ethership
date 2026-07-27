@@ -78,7 +78,7 @@ const FOOTER_LINKS: FooterLink[] = [
   { label: 'ABOUT', href: '/about' },
   { label: 'PROJECT', href: '/project' },
   { label: 'ETHER ART', href: '/ether-art' },
-  { label: 'PRESS' },
+  { label: 'NEWS', href: '/press' },
 ];
 
 export default function EtherArtClient() {

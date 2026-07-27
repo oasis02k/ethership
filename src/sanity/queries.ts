@@ -78,3 +78,13 @@ export const PROJECT_ORDER_QUERY = defineQuery(`
 export const PROJECT_SLUGS_QUERY = defineQuery(`
   *[_type == "project" && defined(slug.current)].slug.current
 `);
+
+export const NEWS_ITEMS_QUERY = defineQuery(`
+  *[_type == "newsItem"] | order(date desc){
+    _id,
+    date,
+    title,
+    location,
+    link
+  }
+`);
