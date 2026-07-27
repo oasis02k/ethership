@@ -48,7 +48,7 @@ const FOOTER_LINKS: FooterLink[] = [
   { label: 'ABOUT', href: '/about' },
   { label: 'PROJECT', href: '/project' },
   { label: 'ETHER ART', href: '/ether-art' },
-  { label: 'PRESS' },
+  { label: 'NEWS', href: '/press' },
 ];
 
 function InfoRow({ label, value }: Row) {
@@ -74,80 +74,61 @@ export default function AboutClient() {
 
       <main className="flex flex-col items-center gap-16 md:gap-24 pt-[104px] md:pt-[128px] pb-16 md:pb-[88px] px-4 md:px-6">
         <div className="flex flex-col items-start gap-16 md:gap-24 w-full max-w-[1440px] mx-auto">
-          {/* Portrait + bio */}
-          <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-start w-full">
-            <div className="w-full md:flex-1 aspect-[672/594] overflow-hidden shrink-0">
-              <img
-                src="/about/portrait-sculpture.png"
-                alt=""
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="flex flex-col gap-8 md:gap-12 items-start w-full md:flex-1 text-[#0f100e]">
-              <p
-                className="font-bold leading-none w-full"
-                style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: 'clamp(40px, 6vw, 80px)', letterSpacing: '-0.02em' }}
-              >
-                Sung Goo Yang
+          {/* Bio */}
+          <div className="flex flex-col md:flex-row gap-[48px] items-start w-full text-[#0f100e]">
+            <p
+              className="font-bold leading-none w-full md:flex-1 md:whitespace-nowrap"
+              style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: 'clamp(40px, 7vw, 114px)', letterSpacing: '-0.02em' }}
+            >
+              Sung Goo Yang
+            </p>
+            <div className="flex flex-col gap-4 text-[18px] tracking-[-0.36px] leading-[1.5] font-medium w-full md:flex-1">
+              <p>
+                Sung Goo Yang is an architect whose work moves between urban scale and the intimate from city
+                plans to fashion runways, from competition-winning buildings to abstract digital works. His
+                practice, Ether Ship, is based in New York.
               </p>
-              <div className="flex flex-col gap-4 text-[18px] tracking-[-0.36px] leading-[1.5] font-medium">
-                <p>
-                  Sung Goo Yang is an architect whose work moves between urban scale and the intimate - from city
-                  plans to fashion runways, from competition-winning buildings to abstract digital works. His
-                  practice, Ether Ship, is based in New York.
-                </p>
-                <p>
-                  Trained at Korea University and Harvard University GSD, he has worked at Herzog & de Meuron in
-                  Basel and Machado and Silvetti Associates in Boston. He is a founding member of A-Gene-Da Group, a
-                  collective of seven architects who hold annual exhibitions.
-                </p>
-                <p>
-                  His teaching spans NYIT, Parsons, RISD, Columbia University, Cooper Union, and beyond - where he
-                  brings the same question he asks in practice: what can architecture become before it becomes a
-                  building?
-                </p>
-              </div>
+              <p>
+                Trained at Korea University and Harvard University GSD, he has worked at Herzog & de Meuron in
+                Basel and Machado and Silvetti Associates in Boston. He is a founding member of A-Gene-Da Group, a
+                collective of seven architects who hold annual exhibitions.
+              </p>
+              <p>
+                His teaching spans NYIT, Parsons, RISD, Columbia University, Cooper Union, and beyond where he
+                brings the same question he asks in practice: what can architecture become before it becomes a
+                building?
+              </p>
             </div>
           </div>
 
-          {/* Education / experience + image */}
+          {/* Education / experience */}
           <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-start w-full">
-            <div className="flex flex-col gap-8 md:gap-12 items-start w-full md:flex-1 order-2 md:order-1">
-              <div className="flex flex-col gap-2 items-start w-full">
-                <p
-                  className="text-[14px] tracking-[-0.28px] text-[rgba(15,16,14,0.56)] w-full"
-                  style={{ fontFamily: 'var(--font-ibm-plex-mono), monospace' }}
-                >
-                  EDUCATION
-                </p>
-                <div className="flex flex-col items-start w-full">
-                  {EDUCATION.map((row) => (
-                    <InfoRow key={row.label} {...row} />
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-2 items-start w-full">
-                <p
-                  className="text-[14px] tracking-[-0.28px] text-[rgba(15,16,14,0.56)] w-full"
-                  style={{ fontFamily: 'var(--font-ibm-plex-mono), monospace' }}
-                >
-                  EXPERIENCE
-                </p>
-                <div className="flex flex-col items-start w-full">
-                  {EXPERIENCE.map((row) => (
-                    <InfoRow key={row.label} {...row} />
-                  ))}
-                </div>
+            <div className="flex flex-col gap-2 items-start w-full md:flex-1">
+              <p
+                className="text-[14px] tracking-[-0.28px] text-[rgba(15,16,14,0.56)] w-full"
+                style={{ fontFamily: 'var(--font-ibm-plex-mono), monospace' }}
+              >
+                EDUCATION
+              </p>
+              <div className="flex flex-col items-start w-full">
+                {EDUCATION.map((row) => (
+                  <InfoRow key={row.label} {...row} />
+                ))}
               </div>
             </div>
 
-            <div className="w-full md:flex-1 aspect-[672/638] overflow-hidden shrink-0 order-1 md:order-2">
-              <img
-                src="/about/gainsborough-street.jpg"
-                alt=""
-                className="w-full h-full object-cover"
-              />
+            <div className="flex flex-col gap-2 items-start w-full md:flex-1">
+              <p
+                className="text-[14px] tracking-[-0.28px] text-[rgba(15,16,14,0.56)] w-full"
+                style={{ fontFamily: 'var(--font-ibm-plex-mono), monospace' }}
+              >
+                EXPERIENCE
+              </p>
+              <div className="flex flex-col items-start w-full">
+                {EXPERIENCE.map((row) => (
+                  <InfoRow key={row.label} {...row} />
+                ))}
+              </div>
             </div>
           </div>
 
