@@ -147,6 +147,21 @@ export default function ProjectDetailView({
   const goPrev = () => setIndex((i) => (i - 1 + total) % total);
   const goNext = () => setIndex((i) => (i + 1) % total);
 
+  const touchStartX = useRef<number | null>(null);
+  const SWIPE_THRESHOLD_PX = 50;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null || total <= 1) return;
+    const deltaX = e.changedTouches[0].clientX - touchStartX.current;
+    touchStartX.current = null;
+    if (deltaX > SWIPE_THRESHOLD_PX) goPrev();
+    else if (deltaX < -SWIPE_THRESHOLD_PX) goNext();
+  };
+
   const specRows: { label: string; value: string }[] = [
     { label: 'Site Area', value: project.siteArea },
     { label: 'Space Area', value: project.spaceArea },
@@ -193,14 +208,16 @@ export default function ProjectDetailView({
               onClick={goPrev}
               disabled={total <= 1}
               aria-label="Previous image"
-              className="hidden sm:flex items-center justify-center rounded-full bg-white ring-1 ring-[#c8c3b9] text-[#bb9a6d] hover:bg-[#bb9a6d] hover:text-white hover:ring-0 transition-colors size-12 shrink-0 disabled:opacity-30"
+              className="hidden md:flex items-center justify-center rounded-full bg-white ring-1 ring-[#c8c3b9] text-[#bb9a6d] hover:bg-[#bb9a6d] hover:text-white hover:ring-0 transition-colors size-12 shrink-0 disabled:opacity-30"
             >
               <CarouselChevron direction="left" />
             </button>
 
             <div
               className="relative w-full overflow-hidden rounded-[4px] bg-white h-[250px] sm:h-[576px]"
-              style={{ maxWidth: '1024px' }}
+              style={{ maxWidth: '1024px', touchAction: 'pan-y' }}
+              onTouchStart={onTouchStart}
+              onTouchEnd={onTouchEnd}
             >
               <img
                 key={current._key}
@@ -214,7 +231,7 @@ export default function ProjectDetailView({
               onClick={goNext}
               disabled={total <= 1}
               aria-label="Next image"
-              className="hidden sm:flex items-center justify-center rounded-full bg-white ring-1 ring-[#c8c3b9] text-[#bb9a6d] hover:bg-[#bb9a6d] hover:text-white hover:ring-0 transition-colors size-12 shrink-0 disabled:opacity-30"
+              className="hidden md:flex items-center justify-center rounded-full bg-white ring-1 ring-[#c8c3b9] text-[#bb9a6d] hover:bg-[#bb9a6d] hover:text-white hover:ring-0 transition-colors size-12 shrink-0 disabled:opacity-30"
             >
               <CarouselChevron direction="right" />
             </button>
