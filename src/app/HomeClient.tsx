@@ -159,14 +159,31 @@ function TickerPanel({
     return () => { cancelAnimationFrame(a.current.raf); };
   }, [started, pxPerSec]);
 
+  const touchY = useRef(0);
+
   const onWheel = (e: React.WheelEvent) => {
     a.current.vel += e.deltaY * 0.8;
+  };
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchY.current = e.touches[0].clientY;
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    const y = e.touches[0].clientY;
+    // Finger moving up (y decreasing) should scroll the strip up, matching
+    // the wheel handler's sign convention (deltaY > 0 scrolls down).
+    a.current.vel += (touchY.current - y) * 2.5;
+    touchY.current = y;
   };
 
   return (
     <div
       className={`flex-1 bg-[#f6f4ee] overflow-hidden flex ${mobile ? 'gap-2' : 'gap-4 px-8'}`}
+      style={{ touchAction: 'none' }}
       onWheel={onWheel}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
     >
       <div className="flex-1 overflow-hidden">
         <div ref={strip1Ref} className={`flex flex-col will-change-transform ${mobile ? 'gap-2' : 'gap-4'}`}>
