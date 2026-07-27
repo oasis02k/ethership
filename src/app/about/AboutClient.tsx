@@ -149,13 +149,13 @@ export default function AboutClient() {
         </div>
       </main>
 
-      <footer className="border-t border-[rgba(15,16,14,0.24)] flex flex-wrap gap-4 items-center justify-between p-6 w-full">
-        <div className="flex gap-6 md:gap-14 items-center flex-wrap">
+      <footer className="border-t border-[rgba(15,16,14,0.24)] flex flex-col md:flex-row gap-4 items-center md:justify-between p-6 w-full">
+        <div className="flex justify-between md:justify-start w-full md:w-auto gap-4 md:gap-14 items-center">
           {FOOTER_LINKS.map((link) => (
             <FooterLink key={link.label} label={link.label} href={link.href} />
           ))}
         </div>
-        <p className="text-[14px] tracking-[-0.28px] text-[#0f100e]">@ Ether Ship 2026. All rights reserved</p>
+        <p className="text-[14px] tracking-[-0.28px] text-[#0f100e] text-center md:text-left w-full md:w-auto">@ Ether Ship 2026. All rights reserved</p>
       </footer>
 
       <Menu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
