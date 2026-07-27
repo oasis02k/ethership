@@ -75,10 +75,9 @@ function ImageTile({
         style={{ opacity: hovered ? 1 : 0 }}
       />
       <p
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white text-center transition-opacity duration-300 pointer-events-none whitespace-nowrap"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white text-center transition-opacity duration-300 pointer-events-none whitespace-nowrap text-[14px] md:text-[24px]"
         style={{
           fontFamily: 'var(--font-space-grotesk), sans-serif',
-          fontSize: '24px',
           lineHeight: '1.3',
           opacity: hovered ? 1 : 0,
         }}
