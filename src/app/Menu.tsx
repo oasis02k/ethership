@@ -129,14 +129,14 @@ export default function Menu({ isOpen, onClose }: MenuProps) {
       </div>
 
       {/* ── Desktop (≥ 768 px) ──────────────────────────────────────── */}
-      <div className="hidden md:flex flex-1 items-center overflow-hidden">
+      <div className="hidden md:flex flex-1 items-center gap-12 overflow-hidden">
 
         {/* Left: decorative art photo */}
-        <div className="flex items-center justify-center h-full pl-12" style={{ width: '52%' }}>
+        <div className="flex items-center justify-end h-full pl-12 shrink-0" style={{ width: '52%' }}>
           <div
             className="rounded-[4px] overflow-hidden aspect-square"
             style={{
-              width:          'min(48vw, 691px)',
+              width:          'min(100%, 691px)',
               maxHeight:      'calc(100vh - 140px)',
               opacity:        isOpen ? 1 : 0,
               transform:      isOpen ? 'scale(1)' : 'scale(0.96)',
@@ -149,7 +149,7 @@ export default function Menu({ isOpen, onClose }: MenuProps) {
         </div>
 
         {/* Right: nav + contact */}
-        <div className="flex flex-col gap-12 pr-16" style={{ width: '48%' }}>
+        <div className="flex flex-col gap-12 pr-16 min-w-0" style={{ width: 'calc(48% - 48px)' }}>
 
           {/* Nav items */}
           <div className="flex flex-col gap-1">
