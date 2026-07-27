@@ -369,11 +369,11 @@ export default function HomeClient({ col1, col2 }: { col1: TickerImage[]; col2: 
         />
 
         {/* Hero */}
-        <div className="absolute bottom-0 left-0 right-0 bg-white px-4 py-8 flex flex-col gap-6 items-center">
+        <div className="absolute bottom-0 left-0 right-0 bg-white px-4 py-6 flex flex-col gap-6 items-center">
           <div className="flex flex-col gap-2 items-center w-full">
             <h1
               className="font-bold leading-none text-[#0f100e] uppercase text-center"
-              style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: '13vw', letterSpacing: '-0.02em' }}
+              style={{ fontFamily: 'var(--font-cormorant), serif', fontSize: '40px', letterSpacing: '-0.02em' }}
             >
               ETHER SHIP
             </h1>
