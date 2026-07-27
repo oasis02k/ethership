@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Menu from '../Menu';
@@ -39,7 +39,7 @@ const FILTERS: { label: string; value: 'all' | ProjectType }[] = [
   { label: 'Ether ART', value: 'ether-art' },
 ];
 
-const PAGE_SIZE = 8;
+const PAGE_SIZE = 12;
 
 function ProjectTypeTag({ type }: { type: ProjectType }) {
   return (
@@ -60,7 +60,7 @@ function ProjectCard({ project }: { project: Project }) {
       data-cursor-target
     >
       <div className="relative w-full overflow-hidden" style={{ aspectRatio: project.ratio.replace('/', ' / ') }}>
-        <img src={project.src} alt={project.title} className="absolute inset-0 w-full h-full object-cover" />
+        <img src={project.src} alt={project.title} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover" />
       </div>
       <div className="bg-[#f6f4ee] flex items-center justify-between gap-3 p-4">
         <p className="font-bold text-[#0f100e] text-[16px] tracking-[-0.32px] uppercase whitespace-nowrap overflow-hidden text-ellipsis">
@@ -83,6 +83,33 @@ function SortArrow({ direction }: { direction: 'asc' | 'desc' }) {
   );
 }
 
+function ProjectListRow({ project, onClick }: { project: Project; onClick: () => void }) {
+  return (
+    <div
+      onClick={onClick}
+      className="flex gap-3 items-center py-4 border-b border-[rgba(15,16,14,0.12)] cursor-pointer active:bg-[#f6f4ee]/60"
+    >
+      <div className="relative size-[72px] shrink-0 overflow-hidden rounded-[2px]">
+        <img src={project.src} alt={project.title} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover" />
+      </div>
+      <div className="flex-1 min-w-0 flex flex-col gap-1.5">
+        <p className="font-medium text-[#0f100e] text-[16px] tracking-[-0.32px] uppercase truncate">
+          {project.title} {project.year}
+        </p>
+        <div className="flex items-center gap-2 flex-wrap text-[13px] tracking-[-0.26px] text-[rgba(15,16,14,0.56)]">
+          <ProjectTypeTag type={project.type} />
+          {project.location && (
+            <>
+              <span>·</span>
+              <span className="truncate">{project.location}</span>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ProjectTable({ projects, sortDir, onToggleSort }: {
   projects: Project[];
   sortDir: 'asc' | 'desc';
@@ -93,55 +120,78 @@ function ProjectTable({ projects, sortDir, onToggleSort }: {
   const tdBase = "p-4 border-b border-[rgba(15,16,14,0.12)] align-middle";
 
   return (
-    <div className="w-full overflow-x-auto">
-      <table className="w-full min-w-[800px] border-collapse">
-        <thead>
-          <tr>
-            <th className={`${thBase} w-24`}>Image</th>
-            <th className={thBase}>
-              <button onClick={onToggleSort} className="flex items-center gap-1 cursor-pointer">
-                Year
-                <SortArrow direction={sortDir} />
-              </button>
-            </th>
-            <th className={thBase}>Project Name</th>
-            <th className={`${thBase} w-[150px]`}>Project Type</th>
-            <th className={`${thBase} w-[189px]`}>Location</th>
-            <th className={thBase}>Result</th>
-          </tr>
-        </thead>
-        <tbody>
-          {projects.map((project, i) => (
-            <tr
-              key={`${project.title}-${project.year}-${i}`}
-              onClick={() => router.push(`/project/${project.slug}`)}
-              className="cursor-pointer hover:bg-[#f6f4ee]/60"
-            >
-              <td className="w-24 h-24 py-[6px] border-b border-[rgba(15,16,14,0.12)] align-middle">
-                <div className="relative w-full h-full overflow-hidden">
-                  <img src={project.src} alt={project.title} className="absolute inset-0 w-full h-full object-cover" />
-                </div>
-              </td>
-              <td className={`${tdBase} font-medium text-[#0f100e] text-[18px] tracking-[-0.54px] uppercase whitespace-nowrap`}>
-                {project.year}
-              </td>
-              <td className={`${tdBase} font-medium text-[#0f100e] text-[18px] tracking-[-0.54px] uppercase`}>
-                {project.title} {project.year}
-              </td>
-              <td className={tdBase}>
-                <ProjectTypeTag type={project.type} />
-              </td>
-              <td className={`${tdBase} text-[#0f100e] text-[16px] tracking-[-0.48px] whitespace-nowrap`}>
-                {project.location}
-              </td>
-              <td className={`${tdBase} text-[#0f100e] text-[16px] tracking-[-0.48px] whitespace-nowrap`}>
-                {project.result}
-              </td>
+    <>
+      {/* Mobile: compact single-column rows — the desktop table's 6 columns
+          don't fit a narrow screen without horizontal scrolling or truncating
+          Location/Result off-screen. */}
+      <div className="md:hidden flex flex-col w-full">
+        <button
+          onClick={onToggleSort}
+          className="flex items-center gap-1 self-start mb-2 font-[family-name:var(--font-ibm-plex-mono)] font-medium text-[#0f100e] text-[14px] tracking-[-0.42px] uppercase cursor-pointer"
+        >
+          Year
+          <SortArrow direction={sortDir} />
+        </button>
+        {projects.map((project, i) => (
+          <ProjectListRow
+            key={`${project.title}-${project.year}-${i}`}
+            project={project}
+            onClick={() => router.push(`/project/${project.slug}`)}
+          />
+        ))}
+      </div>
+
+      {/* Desktop: full data table */}
+      <div className="hidden md:block w-full overflow-x-auto">
+        <table className="w-full min-w-[800px] border-collapse">
+          <thead>
+            <tr>
+              <th className={`${thBase} w-24`}>Image</th>
+              <th className={thBase}>
+                <button onClick={onToggleSort} className="flex items-center gap-1 cursor-pointer">
+                  Year
+                  <SortArrow direction={sortDir} />
+                </button>
+              </th>
+              <th className={thBase}>Project Name</th>
+              <th className={`${thBase} w-[150px]`}>Project Type</th>
+              <th className={`${thBase} w-[189px]`}>Location</th>
+              <th className={thBase}>Result</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {projects.map((project, i) => (
+              <tr
+                key={`${project.title}-${project.year}-${i}`}
+                onClick={() => router.push(`/project/${project.slug}`)}
+                className="cursor-pointer hover:bg-[#f6f4ee]/60"
+              >
+                <td className="w-24 h-24 py-[6px] border-b border-[rgba(15,16,14,0.12)] align-middle">
+                  <div className="relative w-full h-full overflow-hidden">
+                    <img src={project.src} alt={project.title} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover" />
+                  </div>
+                </td>
+                <td className={`${tdBase} font-medium text-[#0f100e] text-[18px] tracking-[-0.54px] uppercase whitespace-nowrap`}>
+                  {project.year}
+                </td>
+                <td className={`${tdBase} font-medium text-[#0f100e] text-[18px] tracking-[-0.54px] uppercase`}>
+                  {project.title} {project.year}
+                </td>
+                <td className={tdBase}>
+                  <ProjectTypeTag type={project.type} />
+                </td>
+                <td className={`${tdBase} text-[#0f100e] text-[16px] tracking-[-0.48px] whitespace-nowrap`}>
+                  {project.location}
+                </td>
+                <td className={`${tdBase} text-[#0f100e] text-[16px] tracking-[-0.48px] whitespace-nowrap`}>
+                  {project.result}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }
 
@@ -175,6 +225,7 @@ export default function ProjectListClient({ projects: PROJECTS }: { projects: Pr
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
   const filtered = useMemo(
     () => (filter === 'all' ? PROJECTS : PROJECTS.filter((p) => p.type === filter)),
@@ -187,13 +238,34 @@ export default function ProjectListClient({ projects: PROJECTS }: { projects: Pr
     return list;
   }, [filtered, sortDir]);
 
-  const handleFilterChange = (value: typeof filter) => {
-    setFilter(value);
-    setVisibleCount(PAGE_SIZE);
-  };
-
   const visible = sorted.slice(0, visibleCount);
-  const hasMore = visibleCount < sorted.length;
+
+  // Reset pagination whenever the underlying list changes shape (filter/sort).
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [filter, sortDir]);
+
+  // Infinite scroll: grow the visible slice as the sentinel below the list
+  // approaches the viewport, instead of requiring a manual "Load More" click.
+  // Re-created on every visibleCount change (not just once) — observing an
+  // element always fires an immediate check, but a *continuing* intersection
+  // (common with a large rootMargin/short list) doesn't re-fire the callback
+  // on its own, which would otherwise stall growth partway through.
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setVisibleCount((c) => Math.min(c + PAGE_SIZE, sorted.length));
+        }
+      },
+      { rootMargin: '800px' },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [sorted.length, visibleCount]);
 
   return (
     <>
@@ -211,7 +283,7 @@ export default function ProjectListClient({ projects: PROJECTS }: { projects: Pr
                 return (
                   <button
                     key={f.value}
-                    onClick={() => handleFilterChange(f.value)}
+                    onClick={() => setFilter(f.value)}
                     className={`shrink-0 px-3 md:px-4 py-2 rounded-[4px] text-[15px] md:text-[16px] font-medium tracking-[-0.32px] whitespace-nowrap transition-colors ${
                       active ? 'bg-[#0f100e] text-[#bb9a6d]' : 'text-[#0f100e] hover:text-[#bb9a6d]'
                     }`}
@@ -254,16 +326,8 @@ export default function ProjectListClient({ projects: PROJECTS }: { projects: Pr
             />
           )}
 
-          {hasMore && (
-            <div className="flex justify-center w-full">
-              <button
-                onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
-                className="bg-[#f6f4ee] border border-[#c8c3b9] text-[#0f100e] font-medium text-[16px] tracking-[-0.32px] h-12 px-4 rounded-[4px] whitespace-nowrap"
-              >
-                Load More
-              </button>
-            </div>
-          )}
+          {/* Sentinel: entering the viewport (800px early) grows the visible slice */}
+          {visibleCount < sorted.length && <div ref={sentinelRef} aria-hidden className="h-px w-full" />}
 
         </div>
       </div>
