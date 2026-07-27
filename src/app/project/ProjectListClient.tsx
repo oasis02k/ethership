@@ -227,6 +227,18 @@ export default function ProjectListClient({ projects: PROJECTS }: { projects: Pr
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
+  // Reset pagination whenever the underlying list changes shape (filter/sort).
+  // Adjusted during render (React's sanctioned pattern for this) rather than
+  // in an effect, which would commit the old visibleCount first and then
+  // trigger a second, visible render when the effect fires.
+  const [prevFilter, setPrevFilter] = useState(filter);
+  const [prevSortDir, setPrevSortDir] = useState(sortDir);
+  if (filter !== prevFilter || sortDir !== prevSortDir) {
+    setPrevFilter(filter);
+    setPrevSortDir(sortDir);
+    setVisibleCount(PAGE_SIZE);
+  }
+
   const filtered = useMemo(
     () => (filter === 'all' ? PROJECTS : PROJECTS.filter((p) => p.type === filter)),
     [filter, PROJECTS],
@@ -239,11 +251,6 @@ export default function ProjectListClient({ projects: PROJECTS }: { projects: Pr
   }, [filtered, sortDir]);
 
   const visible = sorted.slice(0, visibleCount);
-
-  // Reset pagination whenever the underlying list changes shape (filter/sort).
-  useEffect(() => {
-    setVisibleCount(PAGE_SIZE);
-  }, [filter, sortDir]);
 
   // Infinite scroll: grow the visible slice as the sentinel below the list
   // approaches the viewport, instead of requiring a manual "Load More" click.
@@ -272,7 +279,7 @@ export default function ProjectListClient({ projects: PROJECTS }: { projects: Pr
       <CustomCursor />
       <Nav onMenuClick={() => setMenuOpen(true)} />
 
-      <div className="min-h-screen bg-white flex flex-col items-center pt-[104px] md:pt-[128px] pb-16 md:pb-24 px-4 md:px-6">
+      <div className="min-h-screen bg-white flex flex-col items-center pt-[104px] md:pt-[128px] pb-16 md:pb-24 px-5 md:px-6">
         <div className="w-full flex flex-col gap-6 md:gap-8">
 
           {/* Filters + view toggle */}

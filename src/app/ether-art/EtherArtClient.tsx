@@ -113,7 +113,7 @@ export default function EtherArtClient() {
           ))}
         </div>
 
-        <div className="flex flex-col items-center gap-16 md:gap-24 w-full max-w-[1440px] mx-auto px-4 md:px-6">
+        <div className="flex flex-col items-center gap-16 md:gap-24 w-full max-w-[1440px] mx-auto px-5 md:px-6">
           <div className="flex flex-col gap-8 items-start w-full">
             <p
               className="font-bold text-[#0f100e] w-full"

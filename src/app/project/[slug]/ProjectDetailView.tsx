@@ -200,7 +200,7 @@ export default function ProjectDetailView({
     <>
       <Nav onMenuClick={() => setMenuOpen(true)} />
 
-      <div className="min-h-screen bg-white flex flex-col items-center gap-6 pt-[104px] md:pt-[120px] pb-16 md:pb-20 px-4 md:px-6">
+      <div className="min-h-screen bg-white flex flex-col items-center gap-6 pt-[104px] md:pt-[120px] pb-16 md:pb-20 px-5 md:px-6">
         <div className="flex items-center justify-between w-full max-w-[1024px]">
           <Link
             href={`/project/${prevSlug}`}

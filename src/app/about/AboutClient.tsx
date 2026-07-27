@@ -72,7 +72,7 @@ export default function AboutClient() {
     <div className="min-h-screen bg-[#f6f4ee]">
       <Nav onMenuClick={() => setMenuOpen(true)} />
 
-      <main className="flex flex-col items-center gap-16 md:gap-24 pt-[104px] md:pt-[128px] pb-16 md:pb-[88px] px-4 md:px-6">
+      <main className="flex flex-col items-center gap-16 md:gap-24 pt-[104px] md:pt-[128px] pb-16 md:pb-[88px] px-5 md:px-6">
         <div className="flex flex-col items-start gap-16 md:gap-24 w-full max-w-[1440px] mx-auto">
           {/* Bio */}
           <div className="flex flex-col md:flex-row gap-[48px] items-start w-full text-[#0f100e]">

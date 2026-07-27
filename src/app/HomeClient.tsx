@@ -37,7 +37,9 @@ function ImageTile({
   const imgRef = useRef<HTMLImageElement>(null);
   const firedRef = useRef(false);
   const onLoadedRef = useRef(onLoaded);
-  onLoadedRef.current = onLoaded;
+  useEffect(() => {
+    onLoadedRef.current = onLoaded;
+  });
 
   const notifyLoaded = useCallback(() => {
     if (firedRef.current) return;
@@ -328,13 +330,13 @@ export default function HomeClient({ col1, col2 }: { col1: TickerImage[]; col2: 
             >
               ETHER SHIP
             </h1>
-            <div
+            <h2
               className="flex items-center font-normal"
               style={{ fontSize: 'clamp(15px, 1.67vw, 26px)', letterSpacing: '-0.02em' }}
             >
               <span className="text-[#898780]">Ideas that escaped&nbsp;</span>
               <span className="text-[#bb9a6d]">the building.</span>
-            </div>
+            </h2>
           </div>
 
           <div className="flex gap-4 items-center">
@@ -369,7 +371,7 @@ export default function HomeClient({ col1, col2 }: { col1: TickerImage[]; col2: 
         />
 
         {/* Hero */}
-        <div className="absolute bottom-0 left-0 right-0 bg-white px-4 py-6 flex flex-col gap-6 items-center">
+        <div className="absolute bottom-0 left-0 right-0 bg-white px-5 py-6 flex flex-col gap-6 items-center">
           <div className="flex flex-col gap-2 items-center w-full">
             <h1
               className="font-bold leading-none text-[#0f100e] uppercase text-center"
