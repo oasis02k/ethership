@@ -160,6 +160,13 @@ export default function ProjectDetailView({
   const goPrev = () => setIndex((i) => (i - 1 + total) % total);
   const goNext = () => setIndex((i) => (i + 1) % total);
 
+  // On mobile the container sizes itself to the current image's own aspect
+  // ratio (a fixed height let portrait images letterbox down to a narrow
+  // strip). Desktop keeps its fixed height below — an explicit height wins
+  // over aspect-ratio per spec, so sm:h-[576px] still overrides this as before.
+  const currentDimensions = current?.asset?.metadata?.dimensions;
+  const carouselRatio = currentDimensions ? `${currentDimensions.width} / ${currentDimensions.height}` : '4 / 3';
+
   const touchStartX = useRef<number | null>(null);
   const SWIPE_THRESHOLD_PX = 50;
 
@@ -227,8 +234,8 @@ export default function ProjectDetailView({
             </button>
 
             <div
-              className="relative w-full overflow-hidden rounded-[4px] bg-white h-[250px] sm:h-[576px]"
-              style={{ maxWidth: '1024px', touchAction: 'pan-y' }}
+              className="relative w-full overflow-hidden rounded-[4px] bg-white sm:h-[576px]"
+              style={{ maxWidth: '1024px', touchAction: 'pan-y', aspectRatio: carouselRatio }}
               onTouchStart={onTouchStart}
               onTouchEnd={onTouchEnd}
             >
