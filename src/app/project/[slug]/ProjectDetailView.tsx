@@ -6,8 +6,21 @@ import { PortableText, type PortableTextBlock } from 'next-sanity';
 import gsap from 'gsap';
 import Nav from '../../Nav';
 import Menu from '../../Menu';
+import FooterLink from '../../FooterLink';
 import { urlForImage } from '@/sanity/image';
 import { getLenis } from '../../SmoothScroll';
+
+interface FooterLinkData {
+  label: string;
+  href?: string;
+}
+
+const FOOTER_LINKS: FooterLinkData[] = [
+  { label: 'ABOUT', href: '/about' },
+  { label: 'PROJECT', href: '/project' },
+  { label: 'ETHER ART', href: '/ether-art' },
+  { label: 'NEWS', href: '/press' },
+];
 
 interface ProjectImage {
   _key: string;
@@ -312,6 +325,15 @@ export default function ProjectDetailView({
           </div>
         )}
       </div>
+
+      <footer className="border-t border-[rgba(15,16,14,0.24)] flex flex-wrap gap-4 items-center justify-between p-6 w-full">
+        <div className="flex gap-6 md:gap-14 items-center flex-wrap">
+          {FOOTER_LINKS.map((link) => (
+            <FooterLink key={link.label} label={link.label} href={link.href} />
+          ))}
+        </div>
+        <p className="text-[14px] tracking-[-0.28px] text-[#0f100e]">@ Ether Ship 2026. All rights reserved</p>
+      </footer>
 
       <Menu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
     </>

@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import Menu from '../Menu';
 import Nav from '../Nav';
 import YearRow from '../YearRow';
+import FooterLink from '../FooterLink';
 
 interface Row {
   label: string;
@@ -39,12 +39,12 @@ const AWARDS: Award[] = [
   { year: '2003', title: 'Grand Prize', description: 'Busan International Competition · Busan, Korea' },
 ];
 
-interface FooterLink {
+interface FooterLinkData {
   label: string;
   href?: string;
 }
 
-const FOOTER_LINKS: FooterLink[] = [
+const FOOTER_LINKS: FooterLinkData[] = [
   { label: 'ABOUT', href: '/about' },
   { label: 'PROJECT', href: '/project' },
   { label: 'ETHER ART', href: '/ether-art' },
@@ -151,21 +151,9 @@ export default function AboutClient() {
 
       <footer className="border-t border-[rgba(15,16,14,0.24)] flex flex-wrap gap-4 items-center justify-between p-6 w-full">
         <div className="flex gap-6 md:gap-14 items-center flex-wrap">
-          {FOOTER_LINKS.map((link) =>
-            link.href ? (
-              <Link
-                key={link.label}
-                href={link.href}
-                className="text-[14px] font-medium tracking-[-0.28px] uppercase text-[#0f100e] hover:text-[#bb9a6d] transition-colors duration-200"
-              >
-                {link.label}
-              </Link>
-            ) : (
-              <span key={link.label} className="text-[14px] font-medium tracking-[-0.28px] uppercase text-[#0f100e]">
-                {link.label}
-              </span>
-            )
-          )}
+          {FOOTER_LINKS.map((link) => (
+            <FooterLink key={link.label} label={link.label} href={link.href} />
+          ))}
         </div>
         <p className="text-[14px] tracking-[-0.28px] text-[#0f100e]">@ Ether Ship 2026. All rights reserved</p>
       </footer>

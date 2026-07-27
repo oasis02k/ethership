@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type CSSProperties } from 'react';
 import Link from 'next/link';
+import SlotText from './SlotText';
 
 const imgLogo     = '/logo.svg';
 const imgArtPhoto = '/menu-image.jpg';
@@ -19,20 +20,32 @@ const ROUTES: Partial<Record<string, string>> = {
 };
 
 function NavLink({
-  label, className, style, onNavigate,
+  label, className, style, onNavigate, slot = false,
 }: {
   label: string;
   className: string;
   style?: CSSProperties;
   onNavigate: () => void;
+  /** Footer links use the slot-machine text reel on hover; the main nav list doesn't. */
+  slot?: boolean;
 }) {
+  const [hovered, setHovered] = useState(false);
   const href = ROUTES[label];
+  const content = slot ? <SlotText hovered={hovered}>{label}</SlotText> : label;
+
   if (!href) {
-    return <p className={className} style={style}>{label}</p>;
+    return <p className={className} style={style}>{content}</p>;
   }
   return (
-    <Link href={href} onClick={onNavigate} className={className} style={style}>
-      {label}
+    <Link
+      href={href}
+      onClick={onNavigate}
+      className={className}
+      style={style}
+      onMouseEnter={slot ? () => setHovered(true) : undefined}
+      onMouseLeave={slot ? () => setHovered(false) : undefined}
+    >
+      {content}
     </Link>
   );
 }
@@ -101,9 +114,9 @@ export default function Menu({ isOpen, onClose }: MenuProps) {
     >
       {/* ── Navbar ──────────────────────────────────────────────────── */}
       <div className="absolute top-4 left-5 right-5 md:left-6 md:right-6 h-14 flex items-center justify-between px-5 md:px-6 z-10">
-        <div className="relative shrink-0" style={{ height: '15.984px', width: '167.537px' }}>
+        <Link href="/" onClick={onClose} className="relative shrink-0" style={{ height: '15.984px', width: '167.537px' }}>
           <img alt="Ether Ship" className="absolute inset-0 h-full w-full object-contain object-left" src={imgLogo} />
-        </div>
+        </Link>
         <button
           onClick={onClose}
           className="hidden md:block font-medium text-[#f6f4ee] text-[18px] tracking-[-0.36px] whitespace-nowrap"
@@ -180,6 +193,7 @@ export default function Menu({ isOpen, onClose }: MenuProps) {
               key={link}
               label={link}
               onNavigate={onClose}
+              slot
               className="text-[#f6f4ee] text-[14px] font-medium tracking-[-0.02em] uppercase cursor-pointer hover:text-[#bb9a6d] transition-colors duration-200"
               style={stagger(i)}
             />
@@ -233,12 +247,12 @@ export default function Menu({ isOpen, onClose }: MenuProps) {
         <div>
           <div className="px-10 py-5 flex flex-col gap-4 text-white text-[14px] uppercase tracking-[-0.02em]">
             <div className="flex gap-4">
-              <NavLink label="ABOUT" onNavigate={onClose} className="flex-1 cursor-pointer" />
-              <NavLink label="PROJECT" onNavigate={onClose} className="flex-1 cursor-pointer" />
+              <NavLink label="ABOUT" onNavigate={onClose} slot className="flex-1 cursor-pointer" />
+              <NavLink label="PROJECT" onNavigate={onClose} slot className="flex-1 cursor-pointer" />
             </div>
             <div className="flex gap-4">
-              <NavLink label="ETHER ART" onNavigate={onClose} className="flex-1 cursor-pointer" />
-              <NavLink label="NEWS" onNavigate={onClose} className="flex-1 cursor-pointer" />
+              <NavLink label="ETHER ART" onNavigate={onClose} slot className="flex-1 cursor-pointer" />
+              <NavLink label="NEWS" onNavigate={onClose} slot className="flex-1 cursor-pointer" />
             </div>
           </div>
           <div className="border-t border-[rgba(246,244,238,0.12)] h-12 flex items-center px-5">
