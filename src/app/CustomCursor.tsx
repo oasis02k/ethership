@@ -19,6 +19,10 @@ export default function CustomCursor() {
   useEffect(() => {
     const el = outerRef.current;
     if (!el) return;
+    // Touch devices have no mouse to follow and no hover state to react to —
+    // skip attaching listeners so nothing is left running or briefly flashed
+    // in from a stray synthetic mouse event after a tap.
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
 
     const moveX = gsap.quickTo(el, 'x', { duration: 0.35, ease: 'power3.out' });
     const moveY = gsap.quickTo(el, 'y', { duration: 0.35, ease: 'power3.out' });
