@@ -5,7 +5,7 @@ import type { NewsItem } from '@/sanity/types';
 import PressClient from './PressClient';
 
 export const metadata: Metadata = {
-  title: 'Press — Ether Ship',
+  title: 'News — Ether Ship',
   description: 'News and updates from Ether Ship — competition wins and recognition.',
 };
 

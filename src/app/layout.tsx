@@ -23,8 +23,18 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://ethership.vercel.app"),
   title: "Ether Ship",
-  description: "Ether Ship",
+  description: "Ether Ship is an architecture practice working across buildings, objects, and speculative art — with experience in New York, Basel, and Seoul. Now based in Seoul, Korea.",
+  openGraph: {
+    siteName: "Ether Ship",
+    type: "website",
+    images: [{ url: "/og-image.jpg", width: 800, height: 400 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/og-image.jpg"],
+  },
 };
 
 export default function RootLayout({

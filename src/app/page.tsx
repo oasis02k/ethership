@@ -1,7 +1,13 @@
+import type { Metadata } from 'next';
 import { client } from '@/sanity/client';
 import { HOME_PAGE_QUERY } from '@/sanity/queries';
 import type { ProjectCard } from '@/sanity/types';
 import HomeClient, { type TickerImage } from './HomeClient';
+
+export const metadata: Metadata = {
+  title: 'Ether Ship — Ideas that escaped the building',
+  description: 'Ether Ship is an architecture practice working across buildings, objects, and speculative art — with experience in New York, Basel, and Seoul. Now based in Seoul, Korea.',
+};
 
 const options = { next: { revalidate: 60 } };
 

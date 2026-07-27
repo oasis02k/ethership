@@ -1,9 +1,27 @@
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { client } from '@/sanity/client';
 import { PROJECT_BY_SLUG_QUERY, PROJECT_ORDER_QUERY } from '@/sanity/queries';
 import ProjectDetailView from './ProjectDetailView';
 
 const options = { next: { revalidate: 60 } };
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const project = await client.fetch(PROJECT_BY_SLUG_QUERY, { slug }, options);
+  if (!project) return {};
+
+  const subtitle = [project.location, project.result].filter(Boolean).join(' · ');
+
+  return {
+    title: `${project.title} ${project.year} — Ether Ship`,
+    description: subtitle || `${project.title}, an Ether Ship project.`,
+  };
+}
 
 export default async function ProjectDetailPage({
   params,
