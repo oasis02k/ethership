@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, type CSSProperties } from 'react';
+import { useEffect, useLayoutEffect, useState, type CSSProperties } from 'react';
 import Link from 'next/link';
 import SlotText from './SlotText';
 
@@ -82,10 +82,31 @@ export default function Menu({ isOpen, onClose }: MenuProps) {
     return () => clearInterval(id);
   }, []);
 
-  // Lock body scroll while open
-  useEffect(() => {
-    document.body.style.overflow = isOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
+  // Lock body scroll while open. Hiding overflow removes the real
+  // scrollbar and widens the viewport by its width, which would shift
+  // every right-anchored fixed element (this panel's own close button
+  // included) sideways relative to where the Nav's MENU button sits when
+  // closed. Compensate by measuring that width before locking and feeding
+  // it back in as extra right-inset via --scrollbar-comp.
+  // useLayoutEffect (not useEffect) so the compensation and the overflow
+  // lock land before the browser paints the opacity transition's first
+  // frame — otherwise there's a single frame where the panel is already
+  // fading in/out at the old, uncompensated position, visible as a jump
+  // on a fast open/close click.
+  useLayoutEffect(() => {
+    const root = document.documentElement;
+    if (isOpen) {
+      const scrollbarWidth = window.innerWidth - root.clientWidth;
+      root.style.setProperty('--scrollbar-comp', `${scrollbarWidth}px`);
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+      root.style.setProperty('--scrollbar-comp', '0px');
+    }
+    return () => {
+      document.body.style.overflow = '';
+      root.style.setProperty('--scrollbar-comp', '0px');
+    };
   }, [isOpen]);
 
   // ESC to close
@@ -113,7 +134,7 @@ export default function Menu({ isOpen, onClose }: MenuProps) {
       }}
     >
       {/* ── Navbar ──────────────────────────────────────────────────── */}
-      <div className="absolute top-4 left-5 right-5 md:left-6 md:right-6 h-14 flex items-center justify-between px-5 md:px-6 z-10">
+      <div className="absolute top-4 left-5 md:left-6 right-[calc(1.25rem+var(--scrollbar-comp,0px))] md:right-[calc(1.5rem+var(--scrollbar-comp,0px))] h-14 flex items-center justify-between px-5 md:px-6 z-10">
         <Link href="/" onClick={onClose} className="relative shrink-0" style={{ height: '15.984px', width: '167.537px' }}>
           <img alt="Ether Ship" className="absolute inset-0 h-full w-full object-contain object-left" src={imgLogo} />
         </Link>
